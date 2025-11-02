@@ -35,6 +35,7 @@ model User {
   conversations Conversation[]
   sessions      Session[]
   usageLogs     UsageLog[]
+  mcpTools      UserMcpTool[]
 
   // Metadata
   createdAt     DateTime @default(now())
@@ -275,6 +276,84 @@ model UsageLog {
   @@index([userId, createdAt])
   @@index([type])
   @@map("usage_logs")
+}
+
+// ============================================
+// MCP Tools Management
+// ============================================
+
+enum ToolCategory {
+  CONTENT
+  MEDIA
+  TAXONOMY
+  USER
+  COMMENT
+  MENU
+  FSE
+  ASTRA
+  SITE_CONFIG
+  HEALTH
+  SEARCH
+  WOOCOMMERCE
+  SYSTEM
+}
+
+model McpTool {
+  id            String         @id @default(cuid())
+
+  // Tool identification
+  name          String         @unique  // e.g., "get_posts"
+  displayName   String                  // e.g., "Get Posts"
+  category      ToolCategory
+
+  // Tool details
+  description   String         @db.Text
+  dangerLevel   Int            @default(0) // 0=safe, 1=moderate, 2=high
+
+  // Subscription requirements
+  minTier       SubscriptionTier @default(FREE)
+  isPremium     Boolean        @default(false)
+
+  // Tool configuration
+  isActive      Boolean        @default(true)
+  parameters    Json?          // Tool parameters schema
+
+  // Relations
+  userTools     UserMcpTool[]
+
+  // Metadata
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([category])
+  @@index([minTier])
+  @@map("mcp_tools")
+}
+
+model UserMcpTool {
+  id         String   @id @default(cuid())
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  toolId     String
+  tool       McpTool  @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  // User settings
+  isEnabled  Boolean  @default(true)
+
+  // Usage tracking
+  usageCount Int      @default(0)
+  lastUsed   DateTime?
+
+  // Metadata
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, toolId])
+  @@index([userId])
+  @@index([toolId])
+  @@map("user_mcp_tools")
 }
 
 // ============================================

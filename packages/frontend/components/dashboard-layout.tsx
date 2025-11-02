@@ -12,7 +12,8 @@ import {
   Settings,
   LogOut,
   Zap,
-  CreditCard
+  CreditCard,
+  Wrench
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -22,6 +23,7 @@ const navigation = [
   { name: "Sites", href: "/dashboard/sites", icon: Globe },
   { name: "Chat", href: "/dashboard/chat", icon: MessageSquare },
   { name: "API Keys", href: "/dashboard/api-keys", icon: Key },
+  { name: "Tools", href: "/dashboard/tools", icon: Wrench },
   { name: "Subscription", href: "/dashboard/subscription", icon: CreditCard },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ]

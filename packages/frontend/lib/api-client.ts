@@ -277,6 +277,37 @@ class ApiClient {
   async changePassword(data: { currentPassword: string; newPassword: string }) {
     await this.client.post('/user/change-password', data)
   }
+
+  // MCP Tools
+  async getMcpTools() {
+    const response = await this.client.get('/mcp-tools')
+    return response.data.data
+  }
+
+  async getMcpToolsByCategory() {
+    const response = await this.client.get('/mcp-tools/by-category')
+    return response.data.data
+  }
+
+  async getMcpToolsStats() {
+    const response = await this.client.get('/mcp-tools/stats')
+    return response.data.data
+  }
+
+  async toggleMcpTool(toolId: string, isEnabled: boolean) {
+    const response = await this.client.put(`/mcp-tools/${toolId}/toggle`, { isEnabled })
+    return response.data
+  }
+
+  async toggleMcpCategory(category: string, isEnabled: boolean) {
+    const response = await this.client.put('/mcp-tools/category/toggle', { category, isEnabled })
+    return response.data
+  }
+
+  async seedMcpTools() {
+    const response = await this.client.post('/mcp-tools/seed')
+    return response.data
+  }
 }
 
 export const apiClient = new ApiClient()

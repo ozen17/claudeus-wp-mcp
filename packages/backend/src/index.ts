@@ -15,6 +15,7 @@ import chatRoutes from './routes/chat.js';
 import subscriptionRoutes from './routes/subscription.js';
 import apiKeyRoutes from './routes/apiKey.js';
 import usageRoutes from './routes/usage.js';
+import mcpToolsRoutes from './routes/mcpTools.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -78,6 +79,7 @@ app.use(`${API_PREFIX}/chat`, chatRoutes);
 app.use(`${API_PREFIX}/subscription`, subscriptionRoutes);
 app.use(`${API_PREFIX}/api-keys`, apiKeyRoutes);
 app.use(`${API_PREFIX}/usage`, usageRoutes);
+app.use(`${API_PREFIX}/mcp-tools`, mcpToolsRoutes);
 
 // ============================================
 // Error Handling
