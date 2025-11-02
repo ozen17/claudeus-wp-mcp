@@ -330,6 +330,32 @@ class ApiClient {
   async changePassword(data: { currentPassword: string; newPassword: string }) {
     await this.client.post('/user/change-password', data)
   }
+
+  // Admin (v2)
+  async getOpenAIKeyStatus() {
+    const response = await this.client.get('/admin/config/openai-key/status')
+    return response.data
+  }
+
+  async setOpenAIKey(apiKey: string) {
+    const response = await this.client.put('/admin/config/openai-key', { apiKey })
+    return response.data
+  }
+
+  async getAdminStats() {
+    const response = await this.client.get('/admin/stats')
+    return response.data
+  }
+
+  async makeUserAdmin(userId: string) {
+    const response = await this.client.post(`/admin/users/${userId}/make-admin`)
+    return response.data
+  }
+
+  async revokeAdminAccess(userId: string) {
+    const response = await this.client.delete(`/admin/users/${userId}/admin-access`)
+    return response.data
+  }
 }
 
 export const apiClient = new ApiClient()

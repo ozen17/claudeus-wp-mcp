@@ -1,11 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Plus, Globe, Trash2, TestTube, CheckCircle2, XCircle } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Plus, Globe, Trash2, TestTube, CheckCircle2, XCircle, Sparkles, Info } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
 
 interface Site {
@@ -19,6 +21,7 @@ interface Site {
 }
 
 export default function SitesPage() {
+  const router = useRouter()
   const [sites, setSites] = useState<Site[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddForm, setShowAddForm] = useState(false)
@@ -90,16 +93,34 @@ export default function SitesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold mb-2">WordPress Sites</h1>
           <p className="text-gray-400">Manage your WordPress sites</p>
         </div>
-        <Button onClick={() => setShowAddForm(!showAddForm)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Site
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => router.push('/dashboard/sites/setup')}
+            className="bg-blue-500 hover:bg-blue-600"
+          >
+            <Sparkles className="h-4 w-4 mr-2" />
+            Configuration guidée
+          </Button>
+          <Button onClick={() => setShowAddForm(!showAddForm)} variant="outline">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Site
+          </Button>
+        </div>
       </div>
+
+      {/* MCP Info Alert */}
+      <Alert className="bg-blue-50 border-blue-200 mb-6">
+        <Info className="h-4 w-4 text-blue-600" />
+        <AlertDescription className="text-blue-800">
+          <strong>Recommandé:</strong> Utilisez l'<strong>assistant de configuration guidée</strong> pour connecter votre site WordPress
+          avec le plugin MCP (connexion sécurisée et fonctionnalités complètes).
+        </AlertDescription>
+      </Alert>
 
       {/* Add Site Form */}
       {showAddForm && (

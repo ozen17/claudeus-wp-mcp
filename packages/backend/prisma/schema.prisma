@@ -25,6 +25,7 @@ model User {
   emailVerified Boolean  @default(false)
   twoFactorEnabled Boolean @default(false)
   twoFactorSecret String?
+  isAdmin       Boolean  @default(false)  // Admin users can configure OpenAI key
 
   // Subscription
   subscriptionId String?

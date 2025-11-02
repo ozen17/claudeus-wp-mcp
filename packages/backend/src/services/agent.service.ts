@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { AppError } from '../middleware/errorHandler.js';
 import { logger } from '../utils/logger.js';
+import { SystemConfigService } from './systemConfig.service.js';
 
 /**
  * System prompt for the WordPress AI Assistant Agent
@@ -96,17 +97,27 @@ interface PolicyContext {
 }
 
 export class AgentService {
-  private client: OpenAI;
+  private client: OpenAI | null = null;
   private agentId: string | null = null;
+  private systemConfigService: SystemConfigService;
 
   constructor() {
-    // La clé API OpenAI du SaaS (une seule clé centralisée)
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error('OPENAI_API_KEY environment variable is required');
+    this.systemConfigService = new SystemConfigService();
+  }
+
+  /**
+   * Get OpenAI client (lazy initialization with API key from DB)
+   */
+  private async getClient(): Promise<OpenAI> {
+    if (this.client) {
+      return this.client;
     }
 
+    // Get API key from database or environment
+    const apiKey = await this.systemConfigService.getOpenAIKey();
+
     this.client = new OpenAI({ apiKey });
+    return this.client;
   }
 
   /**
@@ -120,8 +131,10 @@ export class AgentService {
     }
 
     try {
+      const client = await this.getClient();
+
       // Créer un nouvel assistant avec le system prompt
-      const assistant = await this.client.beta.assistants.create({
+      const assistant = await client.beta.assistants.create({
         name: 'WordPress AI Assistant',
         description:
           'Expert WordPress/WooCommerce assistant that helps users manage their websites through natural conversation',
@@ -198,6 +211,7 @@ export class AgentService {
     policyContext: PolicyContext
   ): AsyncGenerator<string | ToolCall[], void, unknown> {
     try {
+      const client = await this.getClient();
       const agentId = await this.getOrCreateAgent();
 
       // Create or use existing thread
@@ -205,17 +219,17 @@ export class AgentService {
       if (threadId) {
         thread = { id: threadId };
       } else {
-        thread = await this.client.beta.threads.create();
+        thread = await client.beta.threads.create();
       }
 
       // Add user message to thread
-      await this.client.beta.threads.messages.create(thread.id, {
+      await client.beta.threads.messages.create(thread.id, {
         role: 'user',
         content: message,
       });
 
       // Create a run with policy context in additional instructions
-      const run = await this.client.beta.threads.runs.create(thread.id, {
+      const run = await client.beta.threads.runs.create(thread.id, {
         assistant_id: agentId,
         additional_instructions: `
 CONTEXTE DE PERMISSIONS pour cette requête:
@@ -246,16 +260,17 @@ Si l'utilisateur demande une action qui nécessite un outil non listé dans les 
     threadId: string,
     runId: string
   ): AsyncGenerator<string | ToolCall[], void, unknown> {
-    let run = await this.client.beta.threads.runs.retrieve(threadId, runId);
+    const client = await this.getClient();
+    let run = await client.beta.threads.runs.retrieve(threadId, runId);
 
     while (run.status === 'queued' || run.status === 'in_progress') {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      run = await this.client.beta.threads.runs.retrieve(threadId, runId);
+      run = await client.beta.threads.runs.retrieve(threadId, runId);
     }
 
     if (run.status === 'completed') {
       // Get messages added by the assistant
-      const messages = await this.client.beta.threads.messages.list(threadId, {
+      const messages = await client.beta.threads.messages.list(threadId, {
         order: 'asc',
         after: run.id,
       });
@@ -290,15 +305,16 @@ Si l'utilisateur demande une action qui nécessite un outil non listé dans les 
     toolOutputs: ToolResult[]
   ): Promise<void> {
     try {
-      await this.client.beta.threads.runs.submitToolOutputs(threadId, runId, {
+      const client = await this.getClient();
+      await client.beta.threads.runs.submitToolOutputs(threadId, runId, {
         tool_outputs: toolOutputs,
       });
 
       // Wait for completion
-      let run = await this.client.beta.threads.runs.retrieve(threadId, runId);
+      let run = await client.beta.threads.runs.retrieve(threadId, runId);
       while (run.status === 'queued' || run.status === 'in_progress') {
         await new Promise((resolve) => setTimeout(resolve, 500));
-        run = await this.client.beta.threads.runs.retrieve(threadId, runId);
+        run = await client.beta.threads.runs.retrieve(threadId, runId);
       }
     } catch (error: any) {
       logger.error('Failed to submit tool outputs', { error, threadId, runId });
@@ -311,7 +327,8 @@ Si l'utilisateur demande une action qui nécessite un outil non listé dans les 
    */
   async deleteThread(threadId: string): Promise<void> {
     try {
-      await this.client.beta.threads.del(threadId);
+      const client = await this.getClient();
+      await client.beta.threads.del(threadId);
     } catch (error) {
       logger.warn('Failed to delete thread', { error, threadId });
       // Non-critical error, just log it

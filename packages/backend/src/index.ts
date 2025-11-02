@@ -16,6 +16,7 @@ import subscriptionRoutes from './routes/subscription.js';
 import usageRoutes from './routes/usage.js';
 import policiesRoutes from './routes/policies.js';
 import auditRoutes from './routes/audit.js';
+import adminRoutes from './routes/admin.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -80,6 +81,7 @@ app.use(`${API_PREFIX}/subscription`, subscriptionRoutes);
 app.use(`${API_PREFIX}/usage`, usageRoutes);
 app.use(`${API_PREFIX}/policies`, policiesRoutes);
 app.use(`${API_PREFIX}/audit`, auditRoutes);
+app.use(`${API_PREFIX}/admin`, adminRoutes);
 
 // ============================================
 // Error Handling

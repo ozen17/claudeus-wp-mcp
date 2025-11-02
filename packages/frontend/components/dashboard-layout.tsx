@@ -19,13 +19,14 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Sites", href: "/dashboard/sites", icon: Globe },
-  { name: "Chat", href: "/dashboard/chat", icon: MessageSquare },
-  { name: "Permissions", href: "/dashboard/policies", icon: Shield },
-  { name: "Journal", href: "/dashboard/audit", icon: ScrollText },
-  { name: "Subscription", href: "/dashboard/subscription", icon: CreditCard },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, adminOnly: false },
+  { name: "Sites", href: "/dashboard/sites", icon: Globe, adminOnly: false },
+  { name: "Chat", href: "/dashboard/chat", icon: MessageSquare, adminOnly: false },
+  { name: "Permissions", href: "/dashboard/policies", icon: Shield, adminOnly: false },
+  { name: "Journal", href: "/dashboard/audit", icon: ScrollText, adminOnly: false },
+  { name: "Subscription", href: "/dashboard/subscription", icon: CreditCard, adminOnly: false },
+  { name: "Admin", href: "/dashboard/admin", icon: Shield, adminOnly: true },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings, adminOnly: false },
 ]
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -72,26 +73,28 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         {/* Navigation */}
         <nav className="p-4 space-y-2">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href
-            const Icon = item.icon
+          {navigation
+            .filter((item) => !item.adminOnly || user?.isAdmin)
+            .map((item) => {
+              const isActive = pathname === item.href
+              const Icon = item.icon
 
-            return (
-              <Link key={item.href} href={item.href}>
-                <div
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-gray-800 text-white"
-                      : "text-gray-400 hover:text-white hover:bg-gray-800/50"
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.name}
-                </div>
-              </Link>
-            )
-          })}
+              return (
+                <Link key={item.href} href={item.href}>
+                  <div
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-gray-800 text-white"
+                        : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.name}
+                  </div>
+                </Link>
+              )
+            })}
         </nav>
 
         {/* User section */}
