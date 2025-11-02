@@ -1,0 +1,295 @@
+// Prisma schema for Claudeus WordPress AI Assistant SaaS
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// User Management
+// ============================================
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  name          String?
+  avatarUrl     String?
+
+  // Authentication
+  emailVerified Boolean  @default(false)
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret String?
+
+  // Subscription
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  // Relations
+  sites         Site[]
+  apiKeys       ApiKey[]
+  conversations Conversation[]
+  sessions      Session[]
+  usageLogs     UsageLog[]
+
+  // Metadata
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lastLoginAt   DateTime?
+
+  @@index([email])
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  refreshToken String   @unique
+  accessToken  String   @unique
+
+  ipAddress    String?
+  userAgent    String?
+
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([refreshToken])
+  @@map("sessions")
+}
+
+// ============================================
+// Subscription Management
+// ============================================
+
+enum SubscriptionTier {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+}
+
+model Subscription {
+  id              String             @id @default(cuid())
+
+  tier            SubscriptionTier   @default(FREE)
+  status          SubscriptionStatus @default(ACTIVE)
+
+  // Stripe integration
+  stripeCustomerId       String?  @unique
+  stripeSubscriptionId   String?  @unique
+  stripePriceId          String?
+
+  // Usage limits
+  maxSites        Int    @default(1)
+  maxRequests     Int    @default(50)
+
+  // Billing
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean   @default(false)
+
+  // Relations
+  users           User[]
+
+  // Metadata
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("subscriptions")
+}
+
+// ============================================
+// WordPress Sites
+// ============================================
+
+model Site {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Site details
+  name        String
+  url         String
+  username    String
+
+  // Encrypted password
+  passwordEncrypted String
+  passwordIv        String
+
+  authType    String   @default("basic") // "basic" or "jwt"
+
+  // Status
+  isActive    Boolean  @default(true)
+  lastChecked DateTime?
+  isHealthy   Boolean  @default(true)
+
+  // Relations
+  conversations Conversation[]
+
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@map("sites")
+}
+
+// ============================================
+// AI API Keys
+// ============================================
+
+enum ApiProvider {
+  OPENAI
+  ANTHROPIC
+}
+
+model ApiKey {
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  provider        ApiProvider
+
+  // Encrypted API key
+  keyEncrypted    String
+  keyIv           String
+
+  // Key metadata
+  name            String?     // User-defined name
+  lastUsed        DateTime?
+  isActive        Boolean     @default(true)
+
+  // Metadata
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([userId, provider])
+  @@map("api_keys")
+}
+
+// ============================================
+// Conversations & Chat
+// ============================================
+
+model Conversation {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  siteId      String?
+  site        Site?    @relation(fields: [siteId], references: [id], onDelete: SetNull)
+
+  title       String
+
+  // AI settings
+  provider    ApiProvider @default(ANTHROPIC)
+  model       String      @default("claude-3-5-sonnet-20241022")
+
+  // Relations
+  messages    Message[]
+
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastMessageAt DateTime?
+
+  @@index([userId])
+  @@index([siteId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  role           String       // "user", "assistant", "system"
+  content        String       @db.Text
+
+  // Tool calls (MCP)
+  toolCalls      Json?
+  toolResults    Json?
+
+  // Tokens
+  promptTokens   Int?
+  completionTokens Int?
+  totalTokens    Int?
+
+  // Metadata
+  createdAt      DateTime @default(now())
+
+  @@index([conversationId])
+  @@map("messages")
+}
+
+// ============================================
+// Usage Tracking
+// ============================================
+
+enum UsageType {
+  AI_REQUEST
+  MCP_TOOL_CALL
+  API_CALL
+}
+
+model UsageLog {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type        UsageType
+
+  // AI usage
+  provider    ApiProvider?
+  model       String?
+  promptTokens   Int?
+  completionTokens Int?
+  totalTokens    Int?
+
+  // Cost tracking
+  estimatedCost Decimal? @db.Decimal(10, 6)
+
+  // Request details
+  endpoint    String?
+  method      String?
+  statusCode  Int?
+  responseTime Int?    // milliseconds
+
+  // Metadata
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([type])
+  @@map("usage_logs")
+}
+
+// ============================================
+// System Configuration
+// ============================================
+
+model SystemConfig {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+
+  description String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_configs")
+}
