@@ -39,7 +39,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Backend API
+  # Backend API (v2 with OpenAI Agent)
   backend:
     build:
       context: .
@@ -56,10 +56,13 @@ services:
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-change-me-in-production}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-change-me-in-production}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:-changeme32charactersencryptionk}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
       FRONTEND_URL: http://localhost:3000
-      MCP_SERVER_URL: http://mcp-server:3002
+      RATE_LIMIT_WINDOW_MS: 900000
+      RATE_LIMIT_MAX_REQUESTS: 100
+      LOG_LEVEL: info
     depends_on:
       postgres:
         condition: service_healthy
@@ -69,21 +72,12 @@ services:
       - claudeus-network
     volumes:
       - ./packages/backend/logs:/app/logs
-
-  # MCP Server (WordPress MCP)
-  mcp-server:
-    build:
-      context: .
-      dockerfile: docker/mcp-server.Dockerfile
-    container_name: claudeus-mcp
-    restart: unless-stopped
-    ports:
-      - "3002:3002"
-    environment:
-      NODE_ENV: production
-      PORT: 3002
-    networks:
-      - claudeus-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # Frontend (Next.js)
   frontend:
@@ -100,11 +94,12 @@ services:
       NODE_ENV: production
       NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - claudeus-network
 
-  # Nginx Reverse Proxy
+  # Nginx Reverse Proxy (optional for production)
   nginx:
     image: nginx:alpine
     container_name: claudeus-nginx
@@ -120,6 +115,8 @@ services:
       - backend
     networks:
       - claudeus-network
+    profiles:
+      - production
 
 networks:
   claudeus-network:

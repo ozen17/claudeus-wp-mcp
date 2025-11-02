@@ -4,8 +4,10 @@ import { useEffect, useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Send, Bot, User, Loader2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Send, Bot, User, Loader2, AlertCircle, Sparkles } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
+import Link from "next/link"
 
 interface Message {
   id: string
@@ -17,6 +19,8 @@ interface Message {
 interface Site {
   id: string
   name: string
+  url: string
+  isHealthy: boolean
 }
 
 export default function ChatPage() {
@@ -25,32 +29,22 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false)
   const [sites, setSites] = useState<Site[]>([])
   const [selectedSite, setSelectedSite] = useState<string>("")
-  const [apiKeys, setApiKeys] = useState<any[]>([])
-  const [selectedProvider, setSelectedProvider] = useState<'OPENAI' | 'ANTHROPIC'>('ANTHROPIC')
+  const [conversationId, setConversationId] = useState<string | undefined>()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Fetch sites and API keys
+    // Fetch sites
     async function fetchData() {
       try {
-        const [sitesData, keysData] = await Promise.all([
-          apiClient.getSites(),
-          apiClient.getApiKeys()
-        ])
+        const sitesData = await apiClient.getSites()
         setSites(sitesData)
-        setApiKeys(keysData)
 
         // Set default site
-        if (sitesData.length > 0) {
+        if (sitesData.length > 0 && !selectedSite) {
           setSelectedSite(sitesData[0].id)
         }
-
-        // Set default provider based on available keys
-        if (keysData.length > 0) {
-          setSelectedProvider(keysData[0].provider)
-        }
       } catch (error) {
-        console.error("Failed to fetch data:", error)
+        console.error("Failed to fetch sites:", error)
       }
     }
 
@@ -62,14 +56,17 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
+  // Reset conversation when changing site
+  useEffect(() => {
+    if (selectedSite) {
+      setMessages([])
+      setConversationId(undefined)
+    }
+  }, [selectedSite])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!input.trim() || loading) return
-
-    if (apiKeys.length === 0) {
-      alert("Please add an API key first in the API Keys section")
-      return
-    }
+    if (!input.trim() || loading || !selectedSite) return
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -94,9 +91,9 @@ export default function ChatPage() {
     try {
       await apiClient.streamChat(
         {
-          message: input,
-          siteId: selectedSite || undefined,
-          provider: selectedProvider
+          message: userMessage.content,
+          siteId: selectedSite,
+          conversationId
         },
         (text) => {
           setMessages(prev => {
@@ -115,8 +112,8 @@ export default function ChatPage() {
         const newMessages = [...prev]
         const lastMessage = newMessages[newMessages.length - 1]
         if (lastMessage && lastMessage.role === 'assistant') {
-          lastMessage.content = "Sorry, there was an error processing your request. " +
-            (error.message || "Please try again.")
+          lastMessage.content = "Désolé, une erreur s'est produite. " +
+            (error.message || "Veuillez réessayer.")
         }
         return newMessages
       })
@@ -125,54 +122,82 @@ export default function ChatPage() {
     }
   }
 
+  const selectedSiteData = sites.find(s => s.id === selectedSite)
+
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col">
+    <div className="h-[calc(100vh-4rem)] flex flex-col p-6">
+      {/* Header with site selector */}
       <div className="mb-4">
-        <h1 className="text-3xl font-bold mb-2">AI Assistant</h1>
-        <div className="flex gap-4">
-          {sites.length > 0 && (
+        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
+          <Sparkles className="h-8 w-8 text-blue-500" />
+          Assistant WordPress IA
+        </h1>
+        <p className="text-gray-600 mb-4">
+          Gérez votre site WordPress en langage naturel avec l'aide de l'IA
+        </p>
+
+        {sites.length > 0 ? (
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-medium">Site WordPress :</label>
             <select
               value={selectedSite}
               onChange={(e) => setSelectedSite(e.target.value)}
-              className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm"
+              className="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm min-w-[250px]"
             >
-              <option value="">No site selected</option>
               {sites.map((site) => (
                 <option key={site.id} value={site.id}>
-                  {site.name}
+                  {site.name} {site.isHealthy ? '✓' : '⚠️'}
                 </option>
               ))}
             </select>
-          )}
-
-          {apiKeys.length > 0 && (
-            <select
-              value={selectedProvider}
-              onChange={(e) => setSelectedProvider(e.target.value as 'OPENAI' | 'ANTHROPIC')}
-              className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm"
-            >
-              {apiKeys.map((key) => (
-                <option key={key.id} value={key.provider}>
-                  {key.provider}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
+            {selectedSiteData && !selectedSiteData.isHealthy && (
+              <span className="text-xs text-orange-600">
+                Connexion MCP non vérifiée
+              </span>
+            )}
+          </div>
+        ) : (
+          <Alert className="bg-yellow-50 border-yellow-200">
+            <AlertCircle className="h-4 w-4 text-yellow-600" />
+            <AlertDescription className="text-yellow-800">
+              Vous devez d'abord ajouter un site WordPress.{' '}
+              <Link href="/dashboard/sites" className="underline font-medium">
+                Ajouter un site
+              </Link>
+            </AlertDescription>
+          </Alert>
+        )}
       </div>
 
       {/* Messages */}
-      <Card className="flex-1 bg-gray-900 border-gray-800 overflow-hidden flex flex-col">
+      <Card className="flex-1 overflow-hidden flex flex-col">
         <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.length === 0 ? (
             <div className="h-full flex items-center justify-center text-center">
               <div>
-                <Bot className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Start a conversation</h3>
-                <p className="text-gray-400 text-sm max-w-sm">
-                  Ask me anything about your WordPress site. I can help you create posts,
-                  manage users, and much more.
+                <Bot className="h-16 w-16 text-blue-500 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-3">Bonjour ! 👋</h3>
+                <p className="text-gray-600 text-sm max-w-md mb-6">
+                  Je suis votre assistant WordPress alimenté par l'IA. Parlez-moi en français,
+                  comme si vous parliez à un collègue. Pas besoin de connaître des commandes techniques !
                 </p>
+                <div className="grid grid-cols-1 gap-2 max-w-xl mx-auto text-left">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-sm text-gray-700">
+                      <strong>Exemple :</strong> "Crée-moi un article sur les tendances IA en 2025"
+                    </p>
+                  </div>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <p className="text-sm text-gray-700">
+                      <strong>Exemple :</strong> "Ajoute un produit T-shirt à 25€ dans ma boutique"
+                    </p>
+                  </div>
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                    <p className="text-sm text-gray-700">
+                      <strong>Exemple :</strong> "Montre-moi les dernières commandes"
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           ) : (
@@ -185,24 +210,24 @@ export default function ChatPage() {
                   }`}
                 >
                   {message.role === 'assistant' && (
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
-                      <Bot className="h-5 w-5" />
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                      <Bot className="h-5 w-5 text-white" />
                     </div>
                   )}
 
                   <div
-                    className={`rounded-lg px-4 py-2 max-w-2xl ${
+                    className={`rounded-lg px-4 py-3 max-w-2xl ${
                       message.role === 'user'
                         ? 'bg-blue-500 text-white'
-                        : 'bg-gray-800 text-gray-100'
+                        : 'bg-gray-100 text-gray-900 border border-gray-200'
                     }`}
                   >
-                    <p className="whitespace-pre-wrap">{message.content}</p>
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
                   </div>
 
                   {message.role === 'user' && (
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
-                      <User className="h-5 w-5" />
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                      <User className="h-5 w-5 text-gray-600" />
                     </div>
                   )}
                 </div>
@@ -210,10 +235,10 @@ export default function ChatPage() {
 
               {loading && (
                 <div className="flex gap-3 justify-start">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
-                    <Bot className="h-5 w-5" />
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <Bot className="h-5 w-5 text-white" />
                   </div>
-                  <div className="bg-gray-800 rounded-lg px-4 py-2">
+                  <div className="bg-gray-100 border border-gray-200 rounded-lg px-4 py-3">
                     <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
                   </div>
                 </div>
@@ -225,26 +250,49 @@ export default function ChatPage() {
         </CardContent>
 
         {/* Input */}
-        <div className="border-t border-gray-800 p-4">
+        <div className="border-t border-gray-200 p-4 bg-gray-50">
           <form onSubmit={handleSubmit} className="flex gap-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              disabled={loading || apiKeys.length === 0}
-              className="flex-1"
+              placeholder={
+                selectedSite
+                  ? "Tapez votre message en français..."
+                  : "Sélectionnez un site pour commencer"
+              }
+              disabled={loading || !selectedSite}
+              className="flex-1 bg-white"
             />
-            <Button type="submit" disabled={loading || !input.trim() || apiKeys.length === 0}>
-              <Send className="h-4 w-4" />
+            <Button
+              type="submit"
+              disabled={loading || !input.trim() || !selectedSite}
+              className="bg-blue-500 hover:bg-blue-600"
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
           </form>
-          {apiKeys.length === 0 && (
-            <p className="text-xs text-yellow-500 mt-2">
-              Please add an API key in the API Keys section to start chatting
+          {!selectedSite && sites.length > 0 && (
+            <p className="text-xs text-gray-500 mt-2">
+              Sélectionnez un site WordPress ci-dessus pour commencer
             </p>
           )}
         </div>
       </Card>
+
+      {/* Help */}
+      <div className="mt-4 text-center">
+        <p className="text-xs text-gray-500">
+          💡 Tip: Configurez les permissions dans{' '}
+          <Link href="/dashboard/policies" className="text-blue-600 hover:underline">
+            Permissions & Politiques
+          </Link>
+          {' '}pour contrôler ce que l'assistant peut faire
+        </p>
+      </div>
     </div>
   )
 }

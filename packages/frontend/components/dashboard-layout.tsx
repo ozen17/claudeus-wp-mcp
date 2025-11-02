@@ -8,12 +8,12 @@ import {
   LayoutDashboard,
   Globe,
   MessageSquare,
-  Key,
+  Shield,
   Settings,
   LogOut,
   Zap,
   CreditCard,
-  Wrench
+  ScrollText
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -22,8 +22,8 @@ const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Sites", href: "/dashboard/sites", icon: Globe },
   { name: "Chat", href: "/dashboard/chat", icon: MessageSquare },
-  { name: "API Keys", href: "/dashboard/api-keys", icon: Key },
-  { name: "Tools", href: "/dashboard/tools", icon: Wrench },
+  { name: "Permissions", href: "/dashboard/policies", icon: Shield },
+  { name: "Journal", href: "/dashboard/audit", icon: ScrollText },
   { name: "Subscription", href: "/dashboard/subscription", icon: CreditCard },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ]

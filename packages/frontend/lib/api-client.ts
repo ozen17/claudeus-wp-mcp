@@ -110,7 +110,7 @@ class ApiClient {
     return response.data.data
   }
 
-  // Sites
+  // Sites (v2 - with MCP plugin support)
   async getSites() {
     const response = await this.client.get('/sites')
     return response.data.data
@@ -124,9 +124,10 @@ class ApiClient {
   async createSite(data: {
     name: string
     url: string
-    username: string
-    password: string
-    authType?: string
+    mcpJwtToken?: string
+    username?: string
+    password?: string
+    authType?: 'mcp' | 'basic'
   }) {
     const response = await this.client.post('/sites', data)
     return response.data.data
@@ -146,36 +147,16 @@ class ApiClient {
     return response.data.data
   }
 
-  // API Keys
-  async getApiKeys() {
-    const response = await this.client.get('/api-keys')
+  async testMcpConnection(url: string, jwtToken: string) {
+    const response = await this.client.post('/sites/test-mcp', { url, jwtToken })
     return response.data.data
   }
 
-  async createApiKey(data: {
-    provider: 'OPENAI' | 'ANTHROPIC'
-    key: string
-    name?: string
-  }) {
-    const response = await this.client.post('/api-keys', data)
-    return response.data.data
-  }
-
-  async deleteApiKey(id: string) {
-    await this.client.delete(`/api-keys/${id}`)
-  }
-
-  async testApiKey(id: string) {
-    const response = await this.client.post(`/api-keys/${id}/test`)
-    return response.data.data
-  }
-
-  // Chat
+  // Chat (v2 - OpenAI only, siteId required)
   async streamChat(
     data: {
       message: string
-      siteId?: string
-      provider: 'OPENAI' | 'ANTHROPIC'
+      siteId: string  // Now required
       conversationId?: string
     },
     onChunk: (text: string) => void
@@ -213,6 +194,8 @@ class ApiClient {
             const parsed = JSON.parse(data)
             if (parsed.text) {
               onChunk(parsed.text)
+            } else if (parsed.error) {
+              throw new Error(parsed.error)
             }
           } catch (e) {
             // Ignore parse errors
@@ -234,6 +217,76 @@ class ApiClient {
 
   async deleteConversation(id: string) {
     await this.client.delete(`/chat/conversations/${id}`)
+  }
+
+  // Policies (v2 - replaces MCP tools)
+  async getPolicyCategories() {
+    const response = await this.client.get('/policies/categories')
+    return response.data.categories
+  }
+
+  async getSitePolicy(siteId: string) {
+    const response = await this.client.get(`/policies/sites/${siteId}`)
+    return response.data.policy
+  }
+
+  async updatePolicyRule(siteId: string, category: string, data: {
+    isEnabled?: boolean
+    allowedActions?: string[]
+    maxOpsPerDay?: number
+    minPrice?: number
+    maxPrice?: number
+    maxPublishPerDay?: number
+    requireConfirm?: boolean
+  }) {
+    const response = await this.client.put(`/policies/sites/${siteId}/rules/${category}`, data)
+    return response.data.rule
+  }
+
+  async checkPermission(siteId: string, category: string, action: string) {
+    const response = await this.client.post(`/policies/sites/${siteId}/check`, { category, action })
+    return response.data.permission
+  }
+
+  async getEnabledTools(siteId: string) {
+    const response = await this.client.get(`/policies/sites/${siteId}/enabled-tools`)
+    return response.data
+  }
+
+  // Audit (v2)
+  async getAuditLogs(params?: {
+    siteId?: string
+    category?: string
+    action?: string
+    limit?: number
+    offset?: number
+  }) {
+    const query = new URLSearchParams(params as any).toString()
+    const response = await this.client.get(`/audit?${query}`)
+    return response.data
+  }
+
+  async getSiteAuditLogs(siteId: string, params?: {
+    limit?: number
+    offset?: number
+  }) {
+    const query = new URLSearchParams(params as any).toString()
+    const response = await this.client.get(`/audit/sites/${siteId}?${query}`)
+    return response.data
+  }
+
+  async getAuditStats(params?: {
+    siteId?: string
+    days?: number
+  }) {
+    const query = new URLSearchParams(params as any).toString()
+    const response = await this.client.get(`/audit/stats?${query}`)
+    return response.data
+  }
+
+  async getAuditLog(logId: string) {
+    const response = await this.client.get(`/audit/${logId}`)
+    return response.data.log
   }
 
   // Subscription
@@ -276,37 +329,6 @@ class ApiClient {
 
   async changePassword(data: { currentPassword: string; newPassword: string }) {
     await this.client.post('/user/change-password', data)
-  }
-
-  // MCP Tools
-  async getMcpTools() {
-    const response = await this.client.get('/mcp-tools')
-    return response.data.data
-  }
-
-  async getMcpToolsByCategory() {
-    const response = await this.client.get('/mcp-tools/by-category')
-    return response.data.data
-  }
-
-  async getMcpToolsStats() {
-    const response = await this.client.get('/mcp-tools/stats')
-    return response.data.data
-  }
-
-  async toggleMcpTool(toolId: string, isEnabled: boolean) {
-    const response = await this.client.put(`/mcp-tools/${toolId}/toggle`, { isEnabled })
-    return response.data
-  }
-
-  async toggleMcpCategory(category: string, isEnabled: boolean) {
-    const response = await this.client.put('/mcp-tools/category/toggle', { category, isEnabled })
-    return response.data
-  }
-
-  async seedMcpTools() {
-    const response = await this.client.post('/mcp-tools/seed')
-    return response.data
   }
 }
 
