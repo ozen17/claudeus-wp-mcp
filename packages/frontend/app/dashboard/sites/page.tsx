@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Plus, Globe, Trash2, TestTube, CheckCircle2, XCircle, Sparkles, Info } from "lucide-react"
+import { Plus, Globe, Trash2, TestTube, CheckCircle2, XCircle, Sparkles, Info, PartyPopper } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
 
 interface Site {
@@ -22,9 +22,11 @@ interface Site {
 
 export default function SitesPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [sites, setSites] = useState<Site[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddForm, setShowAddForm] = useState(false)
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     url: "",
@@ -36,6 +38,17 @@ export default function SitesPage() {
 
   useEffect(() => {
     fetchSites()
+
+    // Check for success parameter
+    if (searchParams?.get('success') === 'true') {
+      setShowSuccessMessage(true)
+      // Remove the parameter from URL
+      router.replace('/dashboard/sites')
+      // Auto-hide after 10 seconds
+      setTimeout(() => {
+        setShowSuccessMessage(false)
+      }, 10000)
+    }
   }, [])
 
   const fetchSites = async () => {
@@ -112,6 +125,45 @@ export default function SitesPage() {
           </Button>
         </div>
       </div>
+
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <Alert className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 mb-6 animate-in fade-in slide-in-from-top-4">
+          <PartyPopper className="h-5 w-5 text-green-600" />
+          <AlertDescription className="text-green-900">
+            <p className="font-bold text-lg mb-2">🎉 Félicitations ! Votre site est connecté !</p>
+            <p className="text-sm mb-3">
+              Vous pouvez maintenant profiter de toutes les fonctionnalités de Claudeus !
+            </p>
+            <div className="flex flex-wrap gap-3 text-xs">
+              <Button
+                size="sm"
+                className="bg-green-600 hover:bg-green-700 h-8"
+                onClick={() => router.push('/dashboard/chat')}
+              >
+                <Sparkles className="h-3 w-3 mr-1" />
+                Commencer à discuter avec l'assistant
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-green-300 text-green-700 hover:bg-green-100 h-8"
+                onClick={() => router.push('/dashboard/policies')}
+              >
+                Configurer les permissions
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-green-700 hover:bg-green-100 h-8"
+                onClick={() => setShowSuccessMessage(false)}
+              >
+                Masquer ce message
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* MCP Info Alert */}
       <Alert className="bg-blue-50 border-blue-200 mb-6">
