@@ -1,4 +1,5 @@
-// Prisma schema for Claudeus WordPress AI Assistant SaaS
+// Prisma schema v2 for Claudeus WordPress AI Assistant SaaS
+// Architecture: Agent OpenAI + MCP WordPress Plugin
 
 generator client {
   provider = "prisma-client-js"
@@ -31,11 +32,10 @@ model User {
 
   // Relations
   sites         Site[]
-  apiKeys       ApiKey[]
   conversations Conversation[]
   sessions      Session[]
   usageLogs     UsageLog[]
-  mcpTools      UserMcpTool[]
+  auditLogs     AuditLog[]
 
   // Metadata
   createdAt     DateTime @default(now())
@@ -113,7 +113,7 @@ model Subscription {
 }
 
 // ============================================
-// WordPress Sites
+// WordPress Sites with MCP Plugin
 // ============================================
 
 model Site {
@@ -124,13 +124,17 @@ model Site {
   // Site details
   name        String
   url         String
-  username    String
 
-  // Encrypted password
-  passwordEncrypted String
-  passwordIv        String
+  // MCP Plugin authentication (JWT token from WordPress MCP plugin)
+  mcpJwtToken         String?   // Encrypted JWT token
+  mcpJwtTokenIv       String?   // IV for encryption
+  mcpPluginVersion    String?   // Version of installed MCP plugin
 
-  authType    String   @default("basic") // "basic" or "jwt"
+  // Legacy auth (for migration period)
+  username    String?
+  passwordEncrypted String?
+  passwordIv        String?
+  authType    String   @default("mcp") // "mcp" or "basic" (legacy)
 
   // Status
   isActive    Boolean  @default(true)
@@ -139,6 +143,8 @@ model Site {
 
   // Relations
   conversations Conversation[]
+  policy        SitePolicy?
+  auditLogs     AuditLog[]
 
   // Metadata
   createdAt   DateTime @default(now())
@@ -149,40 +155,79 @@ model Site {
 }
 
 // ============================================
-// AI API Keys
+// Tool Categories & Policies (v2)
 // ============================================
 
-enum ApiProvider {
-  OPENAI
-  ANTHROPIC
+enum ToolCategoryType {
+  APPEARANCE_THEMES   // Thèmes, customizer, FSE
+  MENUS              // Navigation, menus
+  CONTENT            // Articles, pages, taxonomies
+  MEDIA              // Images, fichiers
+  WOOCOMMERCE        // Produits, commandes, clients
+  USERS              // Utilisateurs, rôles
+  SETTINGS           // Options, configuration
 }
 
-model ApiKey {
-  id              String      @id @default(cuid())
-  userId          String
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+enum PolicyAction {
+  READ      // Lire, consulter
+  CREATE    // Créer
+  UPDATE    // Modifier
+  DELETE    // Supprimer
+  PUBLISH   // Publier (pour content)
+}
 
-  provider        ApiProvider
+model SitePolicy {
+  id          String       @id @default(cuid())
+  siteId      String       @unique
+  site        Site         @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
-  // Encrypted API key
-  keyEncrypted    String
-  keyIv           String
+  // Global settings
+  requireConfirmDelete Boolean @default(true)  // Toujours demander confirmation pour DELETE
+  defaultEnabled       Boolean @default(true)  // Par défaut, tout est activé
 
-  // Key metadata
-  name            String?     // User-defined name
-  lastUsed        DateTime?
-  isActive        Boolean     @default(true)
+  rules       PolicyRule[]
 
-  // Metadata
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
-  @@index([userId, provider])
-  @@map("api_keys")
+  @@map("site_policies")
+}
+
+model PolicyRule {
+  id              String            @id @default(cuid())
+  sitePolicyId    String
+  sitePolicy      SitePolicy        @relation(fields: [sitePolicyId], references: [id], onDelete: Cascade)
+
+  category        ToolCategoryType
+  isEnabled       Boolean           @default(true)  // Catégorie activée/désactivée
+
+  // Actions autorisées (array JSON)
+  allowedActions  String[]          @default([])    // ["READ", "CREATE", "UPDATE"]
+
+  // Contraintes optionnelles par catégorie
+  maxOpsPerDay    Int?              // Max opérations par jour (null = illimité)
+
+  // Contraintes WooCommerce
+  minPrice        Decimal?          @db.Decimal(10, 2)
+  maxPrice        Decimal?          @db.Decimal(10, 2)
+
+  // Contraintes Content
+  maxPublishPerDay Int?             // Max publications par jour
+
+  requireConfirm  Boolean           @default(false) // Demander confirmation pour cette catégorie
+
+  metadata        Json?             // Contraintes additionnelles flexibles
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@unique([sitePolicyId, category])
+  @@index([sitePolicyId])
+  @@map("policy_rules")
 }
 
 // ============================================
-// Conversations & Chat
+// Conversations & Chat (OpenAI only)
 // ============================================
 
 model Conversation {
@@ -195,9 +240,9 @@ model Conversation {
 
   title       String
 
-  // AI settings
-  provider    ApiProvider @default(ANTHROPIC)
-  model       String      @default("claude-3-5-sonnet-20241022")
+  // OpenAI Agent configuration
+  agentId     String?  // ID de l'Agent OpenAI (Assistants API v2)
+  model       String   @default("gpt-4o")
 
   // Relations
   messages    Message[]
@@ -220,7 +265,7 @@ model Message {
   role           String       // "user", "assistant", "system"
   content        String       @db.Text
 
-  // Tool calls (MCP)
+  // Tool calls (MCP) - stockés pour audit
   toolCalls      Json?
   toolResults    Json?
 
@@ -237,13 +282,47 @@ model Message {
 }
 
 // ============================================
+// Audit Trail
+// ============================================
+
+model AuditLog {
+  id              String           @id @default(cuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  siteId          String
+  site            Site             @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  category        ToolCategoryType
+  action          PolicyAction
+  toolName        String           // Nom de l'outil MCP appelé (ex: "wc.products.create")
+
+  // Intent & résultat
+  intent          String           @db.Text  // Ce que l'utilisateur a demandé
+  result          String           @db.Text  // Résultat de l'action
+  success         Boolean
+
+  // Diff WordPress (optionnel)
+  beforeState     Json?            // État avant
+  afterState      Json?            // État après
+
+  metadata        Json?            // Données supplémentaires
+
+  createdAt       DateTime         @default(now())
+
+  @@index([userId, createdAt])
+  @@index([siteId, createdAt])
+  @@index([category])
+  @@map("audit_logs")
+}
+
+// ============================================
 // Usage Tracking
 // ============================================
 
 enum UsageType {
-  AI_REQUEST
-  MCP_TOOL_CALL
-  API_CALL
+  AI_REQUEST      // Requête à l'Agent OpenAI
+  MCP_TOOL_CALL   // Appel d'outil MCP
+  API_CALL        // Appel API général
 }
 
 model UsageLog {
@@ -253,14 +332,13 @@ model UsageLog {
 
   type        UsageType
 
-  // AI usage
-  provider    ApiProvider?
+  // AI usage (OpenAI only now)
   model       String?
   promptTokens   Int?
   completionTokens Int?
   totalTokens    Int?
 
-  // Cost tracking
+  // Cost tracking (based on OpenAI pricing)
   estimatedCost Decimal? @db.Decimal(10, 6)
 
   // Request details
@@ -276,84 +354,6 @@ model UsageLog {
   @@index([userId, createdAt])
   @@index([type])
   @@map("usage_logs")
-}
-
-// ============================================
-// MCP Tools Management
-// ============================================
-
-enum ToolCategory {
-  CONTENT
-  MEDIA
-  TAXONOMY
-  USER
-  COMMENT
-  MENU
-  FSE
-  ASTRA
-  SITE_CONFIG
-  HEALTH
-  SEARCH
-  WOOCOMMERCE
-  SYSTEM
-}
-
-model McpTool {
-  id            String         @id @default(cuid())
-
-  // Tool identification
-  name          String         @unique  // e.g., "get_posts"
-  displayName   String                  // e.g., "Get Posts"
-  category      ToolCategory
-
-  // Tool details
-  description   String         @db.Text
-  dangerLevel   Int            @default(0) // 0=safe, 1=moderate, 2=high
-
-  // Subscription requirements
-  minTier       SubscriptionTier @default(FREE)
-  isPremium     Boolean        @default(false)
-
-  // Tool configuration
-  isActive      Boolean        @default(true)
-  parameters    Json?          // Tool parameters schema
-
-  // Relations
-  userTools     UserMcpTool[]
-
-  // Metadata
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-
-  @@index([category])
-  @@index([minTier])
-  @@map("mcp_tools")
-}
-
-model UserMcpTool {
-  id         String   @id @default(cuid())
-
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  toolId     String
-  tool       McpTool  @relation(fields: [toolId], references: [id], onDelete: Cascade)
-
-  // User settings
-  isEnabled  Boolean  @default(true)
-
-  // Usage tracking
-  usageCount Int      @default(0)
-  lastUsed   DateTime?
-
-  // Metadata
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@unique([userId, toolId])
-  @@index([userId])
-  @@index([toolId])
-  @@map("user_mcp_tools")
 }
 
 // ============================================

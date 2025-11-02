@@ -12,9 +12,7 @@ router.use(authenticate);
 
 const createChatSchema = z.object({
   message: z.string().min(1),
-  siteId: z.string().optional(),
-  provider: z.enum(['OPENAI', 'ANTHROPIC']).default('ANTHROPIC'),
-  model: z.string().optional(),
+  siteId: z.string(), // Now required - chat is always associated with a site
   conversationId: z.string().optional(),
 });
 

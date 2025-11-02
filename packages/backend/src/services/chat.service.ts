@@ -1,192 +1,354 @@
 import { Response } from 'express';
 import { prisma } from '../utils/database.js';
 import { AppError } from '../middleware/errorHandler.js';
-import { ApiKeyService } from './apiKey.service.js';
-import { ApiProvider } from '@prisma/client';
-import Anthropic from '@anthropic-ai/sdk';
-import OpenAI from 'openai';
+import { AgentService } from './agent.service.js';
+import { PolicyService } from './policy.service.js';
+import { McpClientService } from './mcp-client.service.js';
+import { logger } from '../utils/logger.js';
 
 interface ChatData {
   message: string;
-  siteId?: string;
-  provider: ApiProvider;
-  model?: string;
+  siteId: string; // Now required - always associated with a site
   conversationId?: string;
 }
 
+interface ToolCall {
+  id: string;
+  type: 'function';
+  function: {
+    name: string;
+    arguments: string;
+  };
+}
+
+/**
+ * Chat Service v2
+ * Uses OpenAI Agent + MCP Client + Policy filtering
+ */
 export class ChatService {
-  private apiKeyService = new ApiKeyService();
+  private agentService: AgentService;
+  private policyService: PolicyService;
+  private mcpClient: McpClientService;
+
+  constructor() {
+    this.agentService = new AgentService();
+    this.policyService = new PolicyService();
+    this.mcpClient = new McpClientService();
+  }
 
   /**
-   * Stream chat response
+   * Stream chat response using OpenAI Agent
    */
   async streamChat(userId: string, data: ChatData, res: Response) {
-    // Get user's API key
-    const apiKey = await this.apiKeyService.getDecryptedApiKey(
-      userId,
-      data.provider
-    );
-
-    // Get or create conversation
-    let conversation;
-    if (data.conversationId) {
-      conversation = await prisma.conversation.findFirst({
-        where: { id: data.conversationId, userId },
-        include: { messages: { orderBy: { createdAt: 'asc' } } },
+    try {
+      // Validate site
+      const site = await prisma.site.findFirst({
+        where: { id: data.siteId, userId },
       });
 
-      if (!conversation) {
-        throw new AppError('Conversation not found', 404);
+      if (!site) {
+        throw new AppError('Site not found', 404);
       }
-    } else {
-      conversation = await prisma.conversation.create({
+
+      if (!site.isActive) {
+        throw new AppError('Site is not active', 403);
+      }
+
+      // Get or create conversation
+      let conversation;
+      if (data.conversationId) {
+        conversation = await prisma.conversation.findFirst({
+          where: { id: data.conversationId, userId },
+          include: { messages: { orderBy: { createdAt: 'asc' } } },
+        });
+
+        if (!conversation) {
+          throw new AppError('Conversation not found', 404);
+        }
+      } else {
+        conversation = await prisma.conversation.create({
+          data: {
+            userId,
+            siteId: data.siteId,
+            title: data.message.substring(0, 50),
+            model: 'gpt-4o',
+          },
+          include: { messages: true },
+        });
+      }
+
+      // Save user message
+      await prisma.message.create({
+        data: {
+          conversationId: conversation.id,
+          role: 'user',
+          content: data.message,
+        },
+      });
+
+      // Get policy context (allowed tools, constraints)
+      const policyContext = await this.policyService.getPolicyContext(
+        data.siteId,
+        userId
+      );
+
+      // Setup SSE
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+
+      let fullResponse = '';
+      let toolCalls: any[] = [];
+      let threadId = conversation.agentId || null;
+
+      // Process with Agent
+      const generator = this.agentService.processMessage(
+        threadId,
+        data.message,
+        policyContext
+      );
+
+      for await (const chunk of generator) {
+        if (typeof chunk === 'string') {
+          // Text response from agent
+          fullResponse += chunk;
+          res.write(`data: ${JSON.stringify({ text: chunk })}\n\n`);
+        } else if (Array.isArray(chunk)) {
+          // Tool calls requested by agent
+          toolCalls = chunk;
+
+          // Process tool calls
+          const toolResults = await this.processToolCalls(
+            userId,
+            data.siteId,
+            toolCalls
+          );
+
+          // Send tool results back to agent
+          if (threadId && toolResults.length > 0) {
+            // Note: We would need to handle submitting tool outputs
+            // and continue the conversation loop here
+            // For now, we'll log and continue
+            logger.info('Tool calls processed', {
+              conversationId: conversation.id,
+              toolCount: toolResults.length,
+            });
+          }
+        }
+      }
+
+      // Save assistant message
+      const assistantMessage = await prisma.message.create({
+        data: {
+          conversationId: conversation.id,
+          role: 'assistant',
+          content: fullResponse,
+          toolCalls: toolCalls.length > 0 ? JSON.parse(JSON.stringify(toolCalls)) : null,
+        },
+      });
+
+      // Update conversation
+      await prisma.conversation.update({
+        where: { id: conversation.id },
+        data: {
+          lastMessageAt: new Date(),
+          agentId: threadId || undefined,
+        },
+      });
+
+      // Send completion
+      res.write('data: [DONE]\n\n');
+      res.end();
+    } catch (error: any) {
+      logger.error('Chat streaming error', { error: error.message, userId });
+
+      // Send error to client
+      res.write(
+        `data: ${JSON.stringify({ error: error.message || 'An error occurred' })}\n\n`
+      );
+      res.end();
+    }
+  }
+
+  /**
+   * Process tool calls from the Agent
+   */
+  private async processToolCalls(
+    userId: string,
+    siteId: string,
+    toolCalls: ToolCall[]
+  ): Promise<any[]> {
+    const results = [];
+
+    for (const toolCall of toolCalls) {
+      try {
+        if (toolCall.function.name === 'execute_wordpress_action') {
+          const args = JSON.parse(toolCall.function.arguments);
+
+          // Extract action details
+          const { category, action, tool, params, requireConfirm } = args;
+
+          logger.info('Processing tool call', {
+            userId,
+            siteId,
+            category,
+            action,
+            tool,
+          });
+
+          // Check permissions
+          const permission = await this.policyService.checkPermission(
+            siteId,
+            category,
+            action
+          );
+
+          if (!permission.allowed) {
+            results.push({
+              tool_call_id: toolCall.id,
+              output: JSON.stringify({
+                success: false,
+                error: permission.reason || 'Permission denied',
+                needsPermission: true,
+                category,
+                action,
+              }),
+            });
+
+            // Log denied action
+            await this.logAuditTrail(
+              userId,
+              siteId,
+              category,
+              action,
+              tool,
+              'Permission denied: ' + permission.reason,
+              { success: false },
+              false
+            );
+
+            continue;
+          }
+
+          // Check if confirmation is required
+          if (requireConfirm) {
+            const needsConfirm = await this.policyService.requiresConfirmation(
+              siteId,
+              category,
+              action
+            );
+
+            if (needsConfirm) {
+              results.push({
+                tool_call_id: toolCall.id,
+                output: JSON.stringify({
+                  success: false,
+                  error: 'Confirmation required',
+                  needsConfirmation: true,
+                  action: {
+                    category,
+                    action,
+                    tool,
+                    params,
+                  },
+                }),
+              });
+              continue;
+            }
+          }
+
+          // Apply constraints
+          const constrainedParams = await this.policyService.applyConstraints(
+            siteId,
+            category,
+            params
+          );
+
+          // Execute MCP tool
+          const mcpResult = await this.mcpClient.callTool(siteId, {
+            tool,
+            params: constrainedParams,
+          });
+
+          // Log audit trail
+          await this.logAuditTrail(
+            userId,
+            siteId,
+            category,
+            action,
+            tool,
+            JSON.stringify(params),
+            mcpResult.data,
+            mcpResult.success
+          );
+
+          // Return result
+          results.push({
+            tool_call_id: toolCall.id,
+            output: JSON.stringify(mcpResult),
+          });
+        } else {
+          // Unknown tool
+          results.push({
+            tool_call_id: toolCall.id,
+            output: JSON.stringify({
+              success: false,
+              error: 'Unknown tool',
+            }),
+          });
+        }
+      } catch (error: any) {
+        logger.error('Tool call processing error', {
+          error: error.message,
+          toolCall,
+        });
+
+        results.push({
+          tool_call_id: toolCall.id,
+          output: JSON.stringify({
+            success: false,
+            error: error.message || 'Tool execution failed',
+          }),
+        });
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Log action to audit trail
+   */
+  private async logAuditTrail(
+    userId: string,
+    siteId: string,
+    category: any,
+    action: any,
+    toolName: string,
+    intent: string,
+    result: any,
+    success: boolean
+  ) {
+    try {
+      await prisma.auditLog.create({
         data: {
           userId,
-          siteId: data.siteId,
-          title: data.message.substring(0, 50),
-          provider: data.provider,
-          model: data.model || this.getDefaultModel(data.provider),
+          siteId,
+          category,
+          action,
+          toolName,
+          intent,
+          result: JSON.stringify(result),
+          success,
+          metadata: {
+            timestamp: new Date().toISOString(),
+          },
         },
-        include: { messages: true },
       });
+    } catch (error) {
+      logger.error('Failed to log audit trail', { error });
+      // Non-critical, don't throw
     }
-
-    // Save user message
-    await prisma.message.create({
-      data: {
-        conversationId: conversation.id,
-        role: 'user',
-        content: data.message,
-      },
-    });
-
-    // Stream AI response
-    if (data.provider === 'ANTHROPIC') {
-      await this.streamAnthropicResponse(
-        apiKey,
-        conversation,
-        data.message,
-        res
-      );
-    } else {
-      await this.streamOpenAIResponse(apiKey, conversation, data.message, res);
-    }
-  }
-
-  /**
-   * Stream Anthropic response
-   */
-  private async streamAnthropicResponse(
-    apiKey: string,
-    conversation: any,
-    message: string,
-    res: Response
-  ) {
-    const client = new Anthropic({ apiKey });
-
-    const messages = conversation.messages.map((m: any) => ({
-      role: m.role === 'user' ? 'user' : 'assistant',
-      content: m.content,
-    }));
-
-    messages.push({ role: 'user', content: message });
-
-    const stream = await client.messages.stream({
-      model: conversation.model,
-      max_tokens: 4096,
-      messages,
-    });
-
-    let fullResponse = '';
-    let promptTokens = 0;
-    let completionTokens = 0;
-
-    for await (const event of stream) {
-      if (event.type === 'content_block_delta') {
-        if (event.delta.type === 'text_delta') {
-          fullResponse += event.delta.text;
-          res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
-        }
-      } else if (event.type === 'message_start') {
-        promptTokens = event.message.usage.input_tokens;
-      } else if (event.type === 'message_delta') {
-        completionTokens = event.usage.output_tokens;
-      }
-    }
-
-    // Save assistant message
-    await prisma.message.create({
-      data: {
-        conversationId: conversation.id,
-        role: 'assistant',
-        content: fullResponse,
-        promptTokens,
-        completionTokens,
-        totalTokens: promptTokens + completionTokens,
-      },
-    });
-
-    // Update conversation
-    await prisma.conversation.update({
-      where: { id: conversation.id },
-      data: { lastMessageAt: new Date() },
-    });
-
-    res.write('data: [DONE]\n\n');
-    res.end();
-  }
-
-  /**
-   * Stream OpenAI response
-   */
-  private async streamOpenAIResponse(
-    apiKey: string,
-    conversation: any,
-    message: string,
-    res: Response
-  ) {
-    const client = new OpenAI({ apiKey });
-
-    const messages = conversation.messages.map((m: any) => ({
-      role: m.role,
-      content: m.content,
-    }));
-
-    messages.push({ role: 'user', content: message });
-
-    const stream = await client.chat.completions.create({
-      model: conversation.model,
-      messages,
-      stream: true,
-    });
-
-    let fullResponse = '';
-
-    for await (const chunk of stream) {
-      const text = chunk.choices[0]?.delta?.content || '';
-      if (text) {
-        fullResponse += text;
-        res.write(`data: ${JSON.stringify({ text })}\n\n`);
-      }
-    }
-
-    // Save assistant message
-    await prisma.message.create({
-      data: {
-        conversationId: conversation.id,
-        role: 'assistant',
-        content: fullResponse,
-      },
-    });
-
-    // Update conversation
-    await prisma.conversation.update({
-      where: { id: conversation.id },
-      data: { lastMessageAt: new Date() },
-    });
-
-    res.write('data: [DONE]\n\n');
-    res.end();
   }
 
   /**
@@ -250,17 +412,13 @@ export class ChatService {
       throw new AppError('Conversation not found', 404);
     }
 
+    // Delete thread on OpenAI if exists
+    if (conversation.agentId) {
+      await this.agentService.deleteThread(conversation.agentId);
+    }
+
     await prisma.conversation.delete({
       where: { id: conversationId },
     });
-  }
-
-  /**
-   * Get default model for provider
-   */
-  private getDefaultModel(provider: ApiProvider): string {
-    return provider === 'ANTHROPIC'
-      ? 'claude-3-5-sonnet-20241022'
-      : 'gpt-4';
   }
 }
