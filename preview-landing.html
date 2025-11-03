@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MCP SaaS – Aperçu Landing</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg-gradient: radial-gradient(120% 150% at 50% 0%, #171717 0%, #050505 100%);
+        --card-bg: rgba(15, 15, 15, 0.72);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --primary: #7f5af0;
+        --primary-soft: rgba(127, 90, 240, 0.1);
+        --accent: #2cb67d;
+        --neutral: #a1a1aa;
+        --text: #f5f5f5;
+        --muted: #9ca3af;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(18px);
+        background: rgba(7, 7, 7, 0.72);
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .nav {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 14px;
+      }
+
+      .logo-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 12px rgba(44, 182, 125, 0.6);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 28px;
+        font-size: 14px;
+        color: var(--neutral);
+      }
+
+      .nav-links a:hover {
+        color: var(--text);
+      }
+
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-size: 14px;
+        background: linear-gradient(135deg, var(--primary), #6d28d9);
+        color: #fff;
+        box-shadow: 0 10px 20px rgba(127, 90, 240, 0.25);
+      }
+
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 96px 28px 140px;
+      }
+
+      .hero {
+        display: grid;
+        gap: 32px;
+        text-align: center;
+      }
+
+      .hero-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(127, 90, 240, 0.08);
+        color: var(--neutral);
+        font-size: 13px;
+      }
+
+      .hero h1 {
+        font-size: clamp(42px, 5vw, 68px);
+        letter-spacing: -0.02em;
+        margin: 0;
+      }
+
+      .hero p {
+        max-width: 620px;
+        margin: 0 auto;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .hero-actions {
+        display: inline-flex;
+        gap: 14px;
+        justify-content: center;
+      }
+
+      .secondary {
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--neutral);
+      }
+
+      .grid {
+        margin-top: 110px;
+        display: grid;
+        gap: 22px;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+
+      .card {
+        position: relative;
+        padding: 28px;
+        border-radius: 18px;
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(18px);
+        overflow: hidden;
+      }
+
+      .card::after {
+        content: '';
+        position: absolute;
+        inset: -150px -150px auto auto;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(ellipse at center, rgba(127, 90, 240, 0.18), transparent 60%);
+        opacity: 0.8;
+      }
+
+      .card h3 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
+      .card p {
+        margin: 0 0 16px;
+        color: var(--neutral);
+        line-height: 1.5;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .workflow {
+        margin-top: 120px;
+        display: grid;
+        gap: 32px;
+      }
+
+      .workflow-header {
+        text-align: center;
+        max-width: 640px;
+        margin: 0 auto;
+      }
+
+      .workflow-header h2 {
+        margin: 0;
+        font-size: 32px;
+      }
+
+      .workflow-steps {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+
+      .workflow-step {
+        padding: 26px;
+        border-radius: 18px;
+        border: 1px solid var(--glass-border);
+        background: rgba(12, 12, 12, 0.78);
+        display: grid;
+        gap: 12px;
+      }
+
+      .workflow-step span {
+        font-size: 13px;
+        color: var(--neutral);
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+      }
+
+      .workflow-step a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--glass-border);
+        color: var(--neutral);
+        font-size: 13px;
+        text-transform: none;
+        letter-spacing: 0;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .workflow-step a:hover {
+        color: var(--text);
+        border-color: rgba(127, 90, 240, 0.4);
+      }
+
+      code {
+        padding: 2px 6px;
+        border-radius: 6px;
+        background: rgba(127, 90, 240, 0.12);
+        color: var(--primary);
+        font-size: 13px;
+      }
+
+      .pricing {
+        margin-top: 120px;
+        display: grid;
+        gap: 26px;
+      }
+
+      .pricing-header {
+        text-align: center;
+      }
+
+      .pricing-header h2 {
+        font-size: 34px;
+        margin: 0;
+      }
+
+      .pricing-cards {
+        display: grid;
+        gap: 22px;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+
+      .price-card {
+        padding: 32px;
+        border-radius: 20px;
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+      }
+
+      .price {
+        margin: 18px 0;
+        font-size: 42px;
+        font-weight: 600;
+      }
+
+      .price span {
+        font-size: 16px;
+        color: var(--neutral);
+        font-weight: 400;
+      }
+
+      .features {
+        margin: 20px 0 32px;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 10px;
+        color: var(--neutral);
+        font-size: 15px;
+      }
+
+      footer {
+        padding: 42px 28px 60px;
+        text-align: center;
+        color: var(--neutral);
+        font-size: 14px;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      @media (max-width: 720px) {
+        .nav {
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .nav-links {
+          gap: 16px;
+        }
+
+        .hero-actions {
+          flex-direction: column;
+          width: 100%;
+        }
+
+        .hero-actions a {
+          justify-content: center;
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="nav">
+        <!-- logo -->
+        <div class="logo">
+          <span class="logo-dot"></span>
+          MCP SaaS
+        </div>
+        <!-- links -->
+        <nav class="nav-links">
+          <a href="#features">Fonctionnalites</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#pricing">Tarifs</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <!-- cta -->
+        <a class="cta" href="#">Demarrer</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <span class="hero-label">
+          <span>✨</span>
+          Assistant WordPress pilote par MCP
+        </span>
+        <h1>Gere WordPress et WooCommerce par simple conversation</h1>
+        <p>
+          Installe le plugin MCP, rattache ton site dans la console puis laisse l'agent OpenAI executer
+          les actions autorisees. Contenu, WooCommerce et maintenance : tout est trace et protege par des
+          toggles.
+        </p>
+        <div class="hero-actions">
+          <a class="cta" href="#workflow">Explorer la console</a>
+          <a class="secondary" href="/claudeus-wp-mcp.zip" download>Telecharger le plugin MCP</a>
+        </div>
+      </section>
+
+      <section class="grid" id="features">
+        <article class="card">
+          <span class="tag">Orchestrator</span>
+          <h3>Backend NestJS connecte a MCP</h3>
+          <p>
+            Un coeur Node.js qui centralise l'authentification, les toggles de securite et l'orchestration
+            des outils MCP vers WordPress et WooCommerce.
+          </p>
+        </article>
+        <article class="card">
+          <span class="tag">Agent GPT</span>
+          <h3>Assistant OpenAI specialise</h3>
+          <p>
+            Prompt systeme, politiques et confirmation des actions sensibles integres. Les secretaires
+            n'ont plus qu'a discuter pour agir sur leur site.
+          </p>
+        </article>
+        <article class="card">
+          <span class="tag">Console SaaS</span>
+          <h3>Dashboard responsive limite Vercel</h3>
+          <p>
+            Onboarding, toggles de permissions, historique et chat temps reel. Tout est concu pour des
+            workflows mobile-first.
+          </p>
+        </article>
+      </section>
+
+      <section class="workflow" id="workflow">
+        <div class="workflow-header">
+          <h2>Workflow en trois etapes</h2>
+          <p style="color: var(--muted); margin-top: 12px;">
+            Installe le plugin, rattache ton site dans la console puis discute avec l'agent. Chaque
+            action respecte les toggles et est journalisee.
+          </p>
+        </div>
+        <div class="workflow-steps">
+          <article class="workflow-step" id="plugin">
+            <span>Etape 1</span>
+            <h3>Installer le plugin MCP</h3>
+            <p>
+              Active le plugin <code>claudeus-wp-mcp</code> sur WordPress. Il genere un identifiant
+              dedie (URL, USER, PASS) sans partager ton mot de passe principal.
+            </p>
+            <a href="/claudeus-wp-mcp.zip" download>Telecharger le zip</a>
+          </article>
+          <article class="workflow-step">
+            <span>Etape 2</span>
+            <h3>Rattacher le site</h3>
+            <p>
+              Depuis la console, renseigne les champs URL / Identifiant / Secret. Les donnees sont
+              chiffre es via AES-256 et verifiees via le service MCP.
+            </p>
+          </article>
+          <article class="workflow-step">
+            <span>Etape 3</span>
+            <h3>Dialoguer avec l'agent</h3>
+            <p>
+              Lance des sessions chat, active les categories d'outils et laisse l'agent OpenAI executer
+              les taches WordPress ou WooCommerce autorisees.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="pricing" id="pricing">
+        <div class="pricing-header">
+          <h2>Choisis ton plan</h2>
+          <p style="color: var(--muted); max-width: 520px; margin: 12px auto 0;">
+            Tarification basee sur les quotas d'actions sensibles, les tokens OpenAI et la supervision
+            WP/WooCommerce.
+          </p>
+        </div>
+        <div class="pricing-cards">
+          <article class="price-card">
+            <span class="tag">Starter</span>
+            <div class="price">29€ <span>/ mois</span></div>
+            <ul class="features">
+              <li>1 site WordPress connecte</li>
+              <li>500 actions chat/mois</li>
+              <li>Garde-fous basiques</li>
+            </ul>
+            <a class="secondary" href="#">Commencer</a>
+          </article>
+          <article class="price-card" style="border: 1px solid rgba(127, 90, 240, 0.35);">
+            <span class="tag" style="background: rgba(44, 182, 125, 0.12); color: var(--accent);">
+              Pro
+            </span>
+            <div class="price">79€ <span>/ mois</span></div>
+            <ul class="features">
+              <li>3 sites WordPress/Woo</li>
+              <li>3000 actions chat/mois</li>
+              <li>Audit trail complet</li>
+              <li>Automatisations WooCommerce</li>
+            </ul>
+            <a class="cta" href="#">Choisir Pro</a>
+          </article>
+          <article class="price-card">
+            <span class="tag">Business</span>
+            <div class="price">Sur mesure</div>
+            <ul class="features">
+              <li>Sites illimites</li>
+              <li>Intégration API & SSO</li>
+              <li>Monitoring avance</li>
+              <li>Support prioritaire</li>
+            </ul>
+            <a class="secondary" href="#">Nous contacter</a>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contact">
+      MCP SaaS © 2025 — Propulse par OpenAI et le standard MCP.
+    </footer>
+  </body>
+</html>
