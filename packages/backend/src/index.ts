@@ -17,6 +17,7 @@ import usageRoutes from './routes/usage.js';
 import policiesRoutes from './routes/policies.js';
 import auditRoutes from './routes/audit.js';
 import adminRoutes from './routes/admin.js';
+import downloadRoutes from './routes/download.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -82,6 +83,7 @@ app.use(`${API_PREFIX}/usage`, usageRoutes);
 app.use(`${API_PREFIX}/policies`, policiesRoutes);
 app.use(`${API_PREFIX}/audit`, auditRoutes);
 app.use(`${API_PREFIX}/admin`, adminRoutes);
+app.use(`${API_PREFIX}/download`, downloadRoutes); // Public - no auth required
 
 // ============================================
 // Error Handling

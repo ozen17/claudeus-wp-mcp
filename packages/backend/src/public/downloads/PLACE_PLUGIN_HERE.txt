@@ -1,0 +1,30 @@
+📦 WordPress MCP Plugin Download
+
+Pour activer le téléchargement du plugin WordPress MCP:
+
+1. Placez le fichier plugin WordPress MCP ici avec le nom exact:
+   wordpress-mcp-plugin.zip
+
+2. Le plugin sera automatiquement disponible au téléchargement via:
+   GET /api/v1/download/wordpress-mcp-plugin
+
+3. Les utilisateurs pourront le télécharger directement depuis l'assistant
+   de configuration guidée (Étape 1 du wizard)
+
+4. Assurez-vous que le fichier .zip contient:
+   - Le plugin WordPress complet
+   - readme.txt avec les informations du plugin
+   - Tous les fichiers PHP nécessaires pour le MCP
+
+Structure attendue du plugin WordPress:
+wordpress-mcp-plugin/
+├── wordpress-mcp-plugin.php (fichier principal)
+├── readme.txt
+├── includes/
+│   ├── class-mcp-api.php
+│   ├── class-jwt-auth.php
+│   └── ...
+└── ...
+
+IMPORTANT: Ne committez PAS le fichier .zip dans Git si il contient
+des informations sensibles. Ajoutez-le au .gitignore si nécessaire.

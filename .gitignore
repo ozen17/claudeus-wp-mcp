@@ -39,4 +39,7 @@ sites-config.json
 # Package tarballs
 *.tgz
 
+# WordPress MCP Plugin downloads (placed manually)
+packages/backend/src/public/downloads/wordpress-mcp-plugin.zip
+
 local-planning/

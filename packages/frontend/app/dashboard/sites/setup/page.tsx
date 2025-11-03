@@ -209,6 +209,11 @@ export default function SiteSetupWizard() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  function handleDownloadPlugin() {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'
+    window.open(`${API_URL}/download/wordpress-mcp-plugin`, '_blank')
+  }
+
   const canProceedToStep2 = currentStep >= 2
   const canProceedToStep3 = currentStep >= 3
   const canProceedToStep4 = currentStep >= 4 || (nameValidation?.valid && urlValidation?.valid && tokenValidation?.valid)
@@ -349,7 +354,7 @@ export default function SiteSetupWizard() {
                           <p className="font-medium mb-2">Téléchargez le plugin WordPress MCP</p>
                           <Button
                             className="bg-blue-500 hover:bg-blue-600"
-                            onClick={() => window.open('https://github.com/YOUR_REPO/wordpress-mcp-plugin/releases/latest', '_blank')}
+                            onClick={handleDownloadPlugin}
                           >
                             <Download className="h-4 w-4 mr-2" />
                             Télécharger le plugin (.zip)
