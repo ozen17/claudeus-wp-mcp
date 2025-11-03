@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sites WordPress - Claudeus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar (same as dashboard) -->
+        <aside class="w-64 bg-gray-900 text-white flex flex-col">
+            <div class="p-6 border-b border-gray-800">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-bolt text-blue-400 text-xl"></i>
+                    <span class="text-xl font-bold">Claudeus</span>
+                </div>
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-th-large w-4"></i>
+                    Dashboard
+                </a>
+                <a href="sites.html" class="flex items-center gap-3 px-3 py-2 rounded-md bg-gray-800 text-white font-medium">
+                    <i class="fas fa-globe w-4"></i>
+                    Sites
+                </a>
+                <a href="chat.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-comments w-4"></i>
+                    Chat
+                </a>
+                <a href="policies.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-shield-alt w-4"></i>
+                    Permissions
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-scroll w-4"></i>
+                    Journal
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-credit-card w-4"></i>
+                    Abonnement
+                </a>
+                <a href="admin.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-shield-alt w-4"></i>
+                    Admin
+                </a>
+                <a href="faq.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-cog w-4"></i>
+                    Paramètres
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200 px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">WordPress Sites</h1>
+                        <p class="text-gray-600 mt-1">Gérez vos sites WordPress</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <a href="setup-wizard.html" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition inline-flex items-center gap-2">
+                            <i class="fas fa-magic"></i>
+                            Configuration guidée
+                        </a>
+                        <button class="border border-gray-300 hover:border-blue-500 text-gray-700 hover:text-blue-600 px-6 py-3 rounded-lg font-semibold transition inline-flex items-center gap-2">
+                            <i class="fas fa-plus"></i>
+                            Add Site
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="p-8 space-y-6">
+                <!-- Info Alert -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+                    <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
+                    <div class="text-blue-800 text-sm">
+                        <strong>Recommandé:</strong> Utilisez l'<strong>assistant de configuration guidée</strong> pour connecter votre site WordPress avec le plugin MCP (connexion sécurisée et fonctionnalités complètes).
+                    </div>
+                </div>
+
+                <!-- Sites List -->
+                <div class="space-y-4">
+                    <!-- Site 1 -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-6">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <h3 class="text-lg font-semibold">Mon Blog Personnel</h3>
+                                        <span class="inline-flex items-center gap-1 text-green-600 text-sm">
+                                            <i class="fas fa-check-circle"></i>
+                                        </span>
+                                    </div>
+                                    <a href="#" class="text-sm text-blue-500 hover:underline">
+                                        https://monblog.com
+                                    </a>
+                                    <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                                        <span>WordPress: admin</span>
+                                        <span>Ajouté: 15 Nov 2025</span>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="border border-gray-300 hover:border-blue-500 text-gray-700 hover:text-blue-600 px-4 py-2 rounded-lg transition inline-flex items-center gap-2">
+                                        <i class="fas fa-vial"></i>
+                                        Test
+                                    </button>
+                                    <button class="text-red-500 hover:bg-red-50 px-4 py-2 rounded-lg transition">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Site 2 -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-6">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <h3 class="text-lg font-semibold">Boutique E-commerce</h3>
+                                        <span class="inline-flex items-center gap-1 text-orange-600 text-sm">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                        </span>
+                                    </div>
+                                    <a href="#" class="text-sm text-blue-500 hover:underline">
+                                        https://maboutique.fr
+                                    </a>
+                                    <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                                        <span>WordPress: webmaster</span>
+                                        <span>Ajouté: 10 Nov 2025</span>
+                                    </div>
+                                    <p class="text-xs text-orange-600 mt-2">
+                                        ⚠️ Connexion MCP non vérifiée
+                                    </p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="border border-gray-300 hover:border-blue-500 text-gray-700 hover:text-blue-600 px-4 py-2 rounded-lg transition inline-flex items-center gap-2">
+                                        <i class="fas fa-vial"></i>
+                                        Test
+                                    </button>
+                                    <button class="text-red-500 hover:bg-red-50 px-4 py-2 rounded-lg transition">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State (commented out) -->
+                    <!--
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="py-12 text-center">
+                            <i class="fas fa-globe text-gray-400 text-6xl mb-4"></i>
+                            <h3 class="text-lg font-semibold mb-2">Aucun site configuré</h3>
+                            <p class="text-gray-600 mb-4">Ajoutez votre premier site WordPress pour commencer</p>
+                            <a href="setup-wizard.html" class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition">
+                                <i class="fas fa-magic"></i>
+                                Configuration guidée
+                            </a>
+                        </div>
+                    </div>
+                    -->
+                </div>
+
+                <!-- Help Section -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="font-bold text-lg mb-4">💡 Besoin d'aide ?</h3>
+                    <div class="grid md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <p class="font-semibold mb-1">📚 Documentation</p>
+                            <p class="text-gray-600">Consultez notre guide complet d'installation</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold mb-1">🎥 Tutoriels vidéo</p>
+                            <p class="text-gray-600">Regardez nos vidéos pas à pas</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold mb-1">💬 Support</p>
+                            <p class="text-gray-600">Contactez notre équipe d'assistance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

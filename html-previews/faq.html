@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Claudeus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-5xl mx-auto py-8 px-4 space-y-6">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center gap-2 mb-3">
+                <i class="fas fa-question-circle text-blue-500 text-4xl"></i>
+                <h1 class="text-4xl font-bold">Foire aux Questions (FAQ)</h1>
+            </div>
+            <p class="text-gray-600 text-lg">Trouvez rapidement des réponses à vos questions sur Claudeus</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow p-6">
+            <div class="relative">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input
+                    type="text"
+                    placeholder="Rechercher une question... (ex: token JWT, connexion, sécurité)"
+                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                >
+            </div>
+            <p class="text-xs text-gray-600 mt-2 text-center">💡 Tapez quelques mots-clés pour trouver la réponse rapidement</p>
+        </div>
+
+        <!-- Quick Help -->
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
+            <i class="fas fa-lightbulb text-green-600 text-xl mt-0.5"></i>
+            <div class="text-green-800 text-sm">
+                <strong>🚀 Vous débutez ?</strong> Commencez par les questions de la catégorie "Démarrage" ci-dessous, puis suivez notre <a href="setup-wizard.html" class="underline font-semibold">assistant de configuration guidée</a>.
+            </div>
+        </div>
+
+        <!-- Démarrage Category -->
+        <div>
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                <i class="fas fa-bolt text-blue-500"></i>
+                Démarrage
+            </h2>
+
+            <div class="space-y-3">
+                <!-- Question 1 - Expanded -->
+                <div class="bg-white rounded-lg shadow">
+                    <button class="w-full p-6 text-left">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-3 flex-1">
+                                <i class="fas fa-bolt text-blue-500 text-xl mt-1"></i>
+                                <h4 class="text-base font-semibold">Comment connecter mon site WordPress à Claudeus ?</h4>
+                            </div>
+                            <i class="fas fa-chevron-up text-gray-400"></i>
+                        </div>
+                    </button>
+                    <div class="px-6 pb-6">
+                        <p class="text-gray-700 leading-relaxed text-sm">
+                            C'est très simple ! Suivez notre assistant de configuration guidée en cliquant sur 'Sites' puis 'Configuration guidée'. En 4 étapes simples, vous allez : 1) Télécharger et installer le plugin MCP WordPress gratuit, 2) Générer un token JWT dans votre WordPress, 3) Configurer la connexion dans Claudeus, 4) Tester que tout fonctionne. L'assistant vous guide pas à pas avec des explications claires.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Question 2 - Collapsed -->
+                <div class="bg-white rounded-lg shadow">
+                    <button class="w-full p-6 text-left">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-3 flex-1">
+                                <i class="fas fa-bolt text-blue-500 text-xl mt-1"></i>
+                                <h4 class="text-base font-semibold">C'est quoi un token JWT ? C'est compliqué ?</h4>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Question 3 - Collapsed -->
+                <div class="bg-white rounded-lg shadow">
+                    <button class="w-full p-6 text-left">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-3 flex-1">
+                                <i class="fas fa-bolt text-blue-500 text-xl mt-1"></i>
+                                <h4 class="text-base font-semibold">Dois-je savoir programmer pour utiliser Claudeus ?</h4>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Utilisation Category -->
+        <div>
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                <i class="fas fa-comments text-purple-500"></i>
+                Utilisation
+            </h2>
+
+            <div class="space-y-3">
+                <div class="bg-white rounded-lg shadow">
+                    <button class="w-full p-6 text-left">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-3 flex-1">
+                                <i class="fas fa-comments text-purple-500 text-xl mt-1"></i>
+                                <h4 class="text-base font-semibold">Quels types de questions puis-je poser à l'assistant ?</h4>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow">
+                    <button class="w-full p-6 text-left">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-3 flex-1">
+                                <i class="fas fa-comments text-purple-500 text-xl mt-1"></i>
+                                <h4 class="text-base font-semibold">L'assistant peut-il créer des articles pour moi ?</h4>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sécurité Category -->
+        <div>
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                <i class="fas fa-shield-alt text-green-500"></i>
+                Sécurité
+            </h2>
+
+            <div class="space-y-3">
+                <div class="bg-white rounded-lg shadow">
+                    <button class="w-full p-6 text-left">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-3 flex-1">
+                                <i class="fas fa-shield-alt text-green-500 text-xl mt-1"></i>
+                                <h4 class="text-base font-semibold">Est-ce que mes données sont en sécurité ?</h4>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow">
+                    <button class="w-full p-6 text-left">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex items-start gap-3 flex-1">
+                                <i class="fas fa-shield-alt text-green-500 text-xl mt-1"></i>
+                                <h4 class="text-base font-semibold">Comment contrôler ce que l'assistant peut faire ?</h4>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Support -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg shadow">
+            <div class="p-6 border-b border-blue-200">
+                <h3 class="text-lg font-bold flex items-center gap-2">
+                    <i class="fas fa-life-ring text-blue-500"></i>
+                    Vous ne trouvez pas votre réponse ?
+                </h3>
+                <p class="text-gray-700 text-sm mt-1">Notre équipe support est là pour vous aider !</p>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <!-- Email -->
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span class="text-xl">📧</span>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Email</p>
+                        <a href="mailto:support@claudeus.com" class="text-blue-600 hover:underline">support@claudeus.com</a>
+                        <p class="text-xs text-gray-600 mt-1">Réponse sous 24h</p>
+                    </div>
+                </div>
+
+                <!-- Documentation -->
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span class="text-xl">📚</span>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Documentation</p>
+                        <a href="#" class="text-blue-600 hover:underline flex items-center gap-1">
+                            Consulter la documentation complète
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                        </a>
+                        <p class="text-xs text-gray-600 mt-1">Guides détaillés et tutoriels</p>
+                    </div>
+                </div>
+
+                <!-- Live Chat -->
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span class="text-xl">💬</span>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Chat en direct</p>
+                        <p class="text-sm text-gray-700">Disponible pour les abonnés PRO et ENTERPRISE</p>
+                        <p class="text-xs text-gray-600 mt-1">Lun-Ven 9h-18h (heure de Paris)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to Dashboard -->
+        <div class="text-center">
+            <a href="dashboard.html" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
+                <i class="fas fa-arrow-left"></i>
+                Retour au Dashboard
+            </a>
+        </div>
+    </div>
+</body>
+</html>

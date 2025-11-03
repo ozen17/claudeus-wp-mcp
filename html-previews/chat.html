@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Assistant WordPress IA - Claudeus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar (same structure) -->
+        <aside class="w-64 bg-gray-900 text-white flex flex-col">
+            <div class="p-6 border-b border-gray-800">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-bolt text-blue-400 text-xl"></i>
+                    <span class="text-xl font-bold">Claudeus</span>
+                </div>
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-th-large w-4"></i>
+                    Dashboard
+                </a>
+                <a href="sites.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-globe w-4"></i>
+                    Sites
+                </a>
+                <a href="chat.html" class="flex items-center gap-3 px-3 py-2 rounded-md bg-gray-800 text-white font-medium">
+                    <i class="fas fa-comments w-4"></i>
+                    Chat
+                </a>
+                <a href="policies.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-shield-alt w-4"></i>
+                    Permissions
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800/50">
+                    <i class="fas fa-scroll w-4"></i>
+                    Journal
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col">
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200 px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold flex items-center gap-2">
+                            <i class="fas fa-magic text-blue-500"></i>
+                            Assistant WordPress IA
+                        </h1>
+                        <p class="text-gray-600 mt-1">Gérez votre site WordPress en langage naturel</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-question-circle text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Site Selector -->
+                <div class="mt-4 flex items-center gap-4">
+                    <label class="text-sm font-medium">Site WordPress :</label>
+                    <select class="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm min-w-[250px]">
+                        <option>Mon Blog Personnel ✓</option>
+                        <option>Boutique E-commerce ⚠️</option>
+                    </select>
+                </div>
+            </header>
+
+            <!-- Chat Messages Area -->
+            <div class="flex-1 overflow-y-auto p-8">
+                <!-- Empty State with Examples -->
+                <div class="max-w-4xl mx-auto">
+                    <!-- Welcome -->
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-robot text-white text-4xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Bonjour ! 👋</h3>
+                        <p class="text-gray-600 max-w-2xl mx-auto mb-2">
+                            Je suis votre assistant WordPress alimenté par l'IA. Parlez-moi en français, comme si vous parliez à un collègue.
+                        </p>
+                        <p class="text-sm text-blue-600 font-medium">✨ Pas besoin de connaître des commandes techniques !</p>
+                    </div>
+
+                    <!-- Example Questions -->
+                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                            <i class="fas fa-magic text-blue-500"></i>
+                            💡 Questions d'exemple - Cliquez pour essayer !
+                        </h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <!-- Articles -->
+                            <button class="text-left p-4 rounded-lg border-2 border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 transition-all">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-file-text text-xl mt-0.5"></i>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold mb-1 opacity-75">Articles</p>
+                                        <p class="text-sm font-medium">"Montre-moi mes 5 derniers articles publiés"</p>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <!-- WooCommerce -->
+                            <button class="text-left p-4 rounded-lg border-2 border-green-200 bg-green-50 hover:bg-green-100 text-green-700 transition-all">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-shopping-cart text-xl mt-0.5"></i>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold mb-1 opacity-75">WooCommerce</p>
+                                        <p class="text-sm font-medium">"Combien de commandes j'ai reçues cette semaine ?"</p>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <!-- Produits -->
+                            <button class="text-left p-4 rounded-lg border-2 border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700 transition-all">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-box text-xl mt-0.5"></i>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold mb-1 opacity-75">Produits</p>
+                                        <p class="text-sm font-medium">"Ajoute un produit T-shirt blanc à 29€ dans ma boutique"</p>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <!-- Utilisateurs -->
+                            <button class="text-left p-4 rounded-lg border-2 border-orange-200 bg-orange-50 hover:bg-orange-100 text-orange-700 transition-all">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-users text-xl mt-0.5"></i>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold mb-1 opacity-75">Utilisateurs</p>
+                                        <p class="text-sm font-medium">"Liste-moi les nouveaux utilisateurs inscrits ce mois"</p>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <!-- Création -->
+                            <button class="text-left p-4 rounded-lg border-2 border-pink-200 bg-pink-50 hover:bg-pink-100 text-pink-700 transition-all">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-pen text-xl mt-0.5"></i>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold mb-1 opacity-75">Création</p>
+                                        <p class="text-sm font-medium">"Crée-moi un article sur les tendances e-commerce en 2025"</p>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <!-- Commentaires -->
+                            <button class="text-left p-4 rounded-lg border-2 border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 transition-all">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-comments text-xl mt-0.5"></i>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold mb-1 opacity-75">Commentaires</p>
+                                        <p class="text-sm font-medium">"Y a-t-il des commentaires en attente de modération ?"</p>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <p class="text-xs text-gray-600 mt-4 text-center">
+                            👆 Cliquez sur une question pour la poser instantanément, ou écrivez votre propre message ci-dessous !
+                        </p>
+                    </div>
+
+                    <!-- Tips Cards -->
+                    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div class="p-4 bg-white rounded-lg border border-gray-200">
+                            <p class="text-2xl mb-2">🗣️</p>
+                            <p class="text-sm font-medium text-gray-900 mb-1">Langage naturel</p>
+                            <p class="text-xs text-gray-600">Parlez comme à un humain</p>
+                        </div>
+                        <div class="p-4 bg-white rounded-lg border border-gray-200">
+                            <p class="text-2xl mb-2">⚡</p>
+                            <p class="text-sm font-medium text-gray-900 mb-1">Réponses rapides</p>
+                            <p class="text-xs text-gray-600">L'IA agit immédiatement</p>
+                        </div>
+                        <div class="p-4 bg-white rounded-lg border border-gray-200">
+                            <p class="text-2xl mb-2">🔒</p>
+                            <p class="text-sm font-medium text-gray-900 mb-1">Sécurisé</p>
+                            <p class="text-xs text-gray-600">Permissions configurables</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="border-t border-gray-200 p-4 bg-gray-50">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex gap-2">
+                        <input
+                            type="text"
+                            placeholder="Tapez votre message en français... (ex: Montre-moi mes derniers articles)"
+                            class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+                        >
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 text-center">
+                        ✨ <strong>Astuce :</strong> Vous pouvez me demander n'importe quoi en langage naturel !
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer Links -->
+            <div class="p-4 flex items-center justify-center gap-6 text-xs text-gray-500 border-t border-gray-200">
+                <div>💡 Configurez les <a href="policies.html" class="text-blue-600 hover:underline font-medium">permissions</a></div>
+                <div>📊 Consultez le <a href="#" class="text-blue-600 hover:underline font-medium">journal d'activité</a></div>
+                <div>❓ <a href="faq.html" class="text-blue-600 hover:underline font-medium">Besoin d'aide ?</a></div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
