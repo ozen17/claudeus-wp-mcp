@@ -41,9 +41,6 @@ cp .env.example .env
 **Éditer le fichier `.env` et remplir AU MINIMUM :**
 
 ```bash
-# ✅ OBLIGATOIRE - Votre clé OpenAI
-OPENAI_API_KEY="sk-proj-VOTRE_CLE_OPENAI_ICI"
-
 # ✅ OBLIGATOIRE - Générer des secrets sécurisés
 # Sur Mac/Linux : openssl rand -base64 32
 # Sur Windows PowerShell : voir plus bas
@@ -53,7 +50,12 @@ JWT_REFRESH_SECRET="votre-secret-refresh-jwt-32-caracteres-minimum"
 # ✅ OBLIGATOIRE - Exactement 32 caractères
 # Sur Mac/Linux : openssl rand -hex 16
 ENCRYPTION_KEY="changeme32charactersencryptionk"
+
+# ⚙️ OPTIONNEL - Clé OpenAI (peut être configurée plus tard dans le dashboard admin)
+# OPENAI_API_KEY="sk-proj-VOTRE_CLE_OPENAI_ICI"
 ```
+
+**💡 Note importante :** La clé OpenAI n'est PAS obligatoire dans `.env` ! Vous pourrez la configurer directement dans votre **dashboard admin** après avoir créé votre compte.
 
 **Générer des secrets sur Windows PowerShell :**
 ```powershell
@@ -236,6 +238,46 @@ docker exec -it claudeus-postgres psql -U claudeus -d claudeus_wp_saas
 UPDATE users SET "isAdmin" = true WHERE email = 'votre@email.com';
 \q
 ```
+
+---
+
+## ⚙️ Configurer la Clé OpenAI (Via Dashboard Admin)
+
+**Important :** Vous n'avez PAS besoin de mettre la clé OpenAI dans `.env` ! Elle se configure via l'interface.
+
+### Étapes pour ajouter votre clé OpenAI :
+
+1. **Créer votre compte admin** (voir section ci-dessus)
+
+2. **Se connecter** sur [http://localhost:3002](http://localhost:3002)
+
+3. **Accéder au dashboard admin** :
+   - Dans le menu latéral, cliquez sur "⚙️ Administration"
+   - (Ce lien n'apparaît que pour les comptes admin)
+
+4. **Configurer la clé OpenAI** :
+   - Section "Configuration OpenAI"
+   - Cliquez sur "Modifier la clé API"
+   - Collez votre clé OpenAI : `sk-proj-...`
+   - Cliquez sur "Enregistrer"
+
+5. **Vérification** :
+   - Statut devrait passer à "✅ Configurée"
+   - La clé est chiffrée en AES-256 dans la base de données
+   - Tous les utilisateurs peuvent maintenant utiliser l'assistant IA
+
+### 🔑 Obtenir une Clé OpenAI
+
+Si vous n'avez pas encore de clé :
+
+1. Aller sur [OpenAI Platform](https://platform.openai.com/)
+2. Créer un compte / Se connecter
+3. Aller dans [API Keys](https://platform.openai.com/api-keys)
+4. Cliquer sur "Create new secret key"
+5. Copier la clé (commence par `sk-proj-...`)
+6. Ajouter des crédits sur votre compte OpenAI (facturation)
+
+**Note :** La clé OpenAI est SaaS-wide (partagée par tous les utilisateurs). Vous n'avez besoin que d'une seule clé pour toute la plateforme.
 
 ---
 
