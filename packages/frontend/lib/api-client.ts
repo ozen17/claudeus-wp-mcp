@@ -332,6 +332,7 @@ class ApiClient {
   }
 
   // Admin (v2)
+  // Configuration
   async getOpenAIKeyStatus() {
     const response = await this.client.get('/admin/config/openai-key/status')
     return response.data
@@ -342,8 +343,38 @@ class ApiClient {
     return response.data
   }
 
+  // Stats & Analytics
   async getAdminStats() {
     const response = await this.client.get('/admin/stats')
+    return response.data
+  }
+
+  async getAdminAnalytics(period: '7d' | '30d' | '90d' = '30d') {
+    const response = await this.client.get(`/admin/analytics?period=${period}`)
+    return response.data
+  }
+
+  // User Management
+  async getAdminUsers(params?: {
+    page?: number
+    limit?: number
+    search?: string
+    tier?: string
+    isAdmin?: boolean
+  }) {
+    const queryParams = new URLSearchParams()
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+    if (params?.search) queryParams.append('search', params.search)
+    if (params?.tier) queryParams.append('tier', params.tier)
+    if (params?.isAdmin !== undefined) queryParams.append('isAdmin', params.isAdmin.toString())
+
+    const response = await this.client.get(`/admin/users?${queryParams.toString()}`)
+    return response.data
+  }
+
+  async getAdminUserDetails(userId: string) {
+    const response = await this.client.get(`/admin/users/${userId}`)
     return response.data
   }
 
@@ -352,8 +383,44 @@ class ApiClient {
     return response.data
   }
 
-  async revokeAdminAccess(userId: string) {
-    const response = await this.client.delete(`/admin/users/${userId}/admin-access`)
+  async removeUserAdmin(userId: string) {
+    const response = await this.client.delete(`/admin/users/${userId}/remove-admin`)
+    return response.data
+  }
+
+  async suspendUser(userId: string, reason?: string) {
+    const response = await this.client.patch(`/admin/users/${userId}/suspend`, { reason })
+    return response.data
+  }
+
+  async unsuspendUser(userId: string) {
+    const response = await this.client.patch(`/admin/users/${userId}/unsuspend`)
+    return response.data
+  }
+
+  async deleteUser(userId: string, confirm: string) {
+    const response = await this.client.delete(`/admin/users/${userId}`, {
+      data: { confirm }
+    })
+    return response.data
+  }
+
+  // System Logs
+  async getAdminLogs(params?: {
+    page?: number
+    limit?: number
+    action?: string
+    resource?: string
+    userId?: string
+  }) {
+    const queryParams = new URLSearchParams()
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+    if (params?.action) queryParams.append('action', params.action)
+    if (params?.resource) queryParams.append('resource', params.resource)
+    if (params?.userId) queryParams.append('userId', params.userId)
+
+    const response = await this.client.get(`/admin/logs?${queryParams.toString()}`)
     return response.data
   }
 }
