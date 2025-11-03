@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { GradientButton } from "@/components/ui/gradient-button"
+import { GlassCard, GlassCardContent, GlassCardDescription, GlassCardHeader, GlassCardTitle } from "@/components/ui/glass-card"
 import { Check, CreditCard, Zap } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
 
@@ -104,24 +104,24 @@ export default function SubscriptionPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Subscription</h1>
-        <p className="text-gray-400">Manage your subscription and billing</p>
+        <p className="text-muted-foreground">Manage your subscription and billing</p>
       </div>
 
       {/* Current Plan */}
-      <Card className="bg-gray-900 border-gray-800 mb-8">
-        <CardHeader>
-          <CardTitle>Current Plan</CardTitle>
-          <CardDescription>Your active subscription</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <GlassCard className="glass-card border-border mb-8">
+        <GlassCardHeader>
+          <GlassCardTitle>Current Plan</GlassCardTitle>
+          <GlassCardDescription>Your active subscription</GlassCardDescription>
+        </GlassCardHeader>
+        <GlassCardContent>
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl font-bold mb-2">{PLANS[currentTier as keyof typeof PLANS].name}</h3>
-              <p className="text-gray-400">
+              <p className="text-muted-foreground">
                 ${PLANS[currentTier as keyof typeof PLANS].price}/month
               </p>
               {subscription?.currentPeriodEnd && (
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-neutral mt-2">
                   {subscription.cancelAtPeriodEnd
                     ? `Expires on ${new Date(subscription.currentPeriodEnd).toLocaleDateString()}`
                     : `Renews on ${new Date(subscription.currentPeriodEnd).toLocaleDateString()}`
@@ -130,13 +130,13 @@ export default function SubscriptionPage() {
               )}
             </div>
             {currentTier !== 'FREE' && !subscription?.cancelAtPeriodEnd && (
-              <Button variant="outline" onClick={handleCancel}>
+              <GradientButton variant="outline" onClick={handleCancel}>
                 Cancel Subscription
-              </Button>
+              </GradientButton>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
 
       {/* Plans */}
       <div className="grid md:grid-cols-3 gap-6">
@@ -148,32 +148,32 @@ export default function SubscriptionPage() {
           )
 
           return (
-            <Card
+            <GlassCard
               key={key}
               className={`${
                 isCurrentPlan
                   ? 'bg-blue-500/10 border-blue-500'
-                  : 'bg-gray-900 border-gray-800'
+                  : 'glass-card border-border'
               }`}
             >
-              <CardHeader>
+              <GlassCardHeader>
                 {isCurrentPlan && (
                   <div className="flex items-center gap-2 text-blue-400 text-sm font-medium mb-2">
                     <Zap className="h-4 w-4" />
                     Current Plan
                   </div>
                 )}
-                <CardTitle>{plan.name}</CardTitle>
+                <GlassCardTitle>{plan.name}</GlassCardTitle>
                 <div className="mt-4">
                   <span className="text-4xl font-bold">${plan.price}</span>
-                  <span className="text-gray-400">/month</span>
+                  <span className="text-muted-foreground">/month</span>
                 </div>
-              </CardHeader>
-              <CardContent>
+              </GlassCardHeader>
+              <GlassCardContent>
                 <ul className="space-y-3 mb-6">
                   {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-primary flex-shrink-0" />
                       <span className="text-sm">{feature}</span>
                     </li>
                   ))}
@@ -186,39 +186,39 @@ export default function SubscriptionPage() {
                     disabled={upgrading}
                   >
                     {upgrading ? 'Processing...' : `Upgrade to ${plan.name}`}
-                  </Button>
+                  </GradientButton>
                 )}
 
                 {isCurrentPlan && (
-                  <Button className="w-full" variant="outline" disabled>
+                  <GradientButton className="w-full" variant="outline" disabled>
                     Current Plan
-                  </Button>
+                  </GradientButton>
                 )}
-              </CardContent>
-            </Card>
+              </GlassCardContent>
+            </GlassCard>
           )
         })}
       </div>
 
       {/* Payment Info */}
       {currentTier !== 'FREE' && (
-        <Card className="bg-gray-900 border-gray-800 mt-8">
-          <CardHeader>
-            <CardTitle>Payment Method</CardTitle>
-            <CardDescription>Manage your payment information</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <GlassCard className="glass-card border-border mt-8">
+          <GlassCardHeader>
+            <GlassCardTitle>Payment Method</GlassCardTitle>
+            <GlassCardDescription>Manage your payment information</GlassCardDescription>
+          </GlassCardHeader>
+          <GlassCardContent>
             <div className="flex items-center gap-3">
-              <CreditCard className="h-8 w-8 text-gray-400" />
+              <CreditCard className="h-8 w-8 text-muted-foreground" />
               <div>
                 <p className="text-sm">Payment managed through Stripe</p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-muted-foreground">
                   Contact support to update payment method
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
       )}
     </div>
   )

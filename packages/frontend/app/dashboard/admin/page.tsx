@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { GradientButton } from "@/components/ui/gradient-button"
+import { GlassCard, GlassCardContent, GlassCardDescription, GlassCardHeader, GlassCardTitle } from "@/components/ui/glass-card"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Label } from "@/components/ui/label"
@@ -92,7 +92,7 @@ export default function AdminPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -102,7 +102,7 @@ export default function AdminPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold flex items-center gap-2">
-          <Shield className="h-8 w-8 text-blue-500" />
+          <Shield className="h-8 w-8 text-primary" />
           Administration
         </h1>
         <p className="text-gray-600 mt-2">
@@ -125,21 +125,21 @@ export default function AdminPage() {
       )}
 
       {/* OpenAI Configuration */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Key className="h-5 w-5 text-blue-500" />
+      <GlassCard>
+        <GlassCardHeader>
+          <GlassCardTitle className="flex items-center gap-2">
+            <Key className="h-5 w-5 text-primary" />
             Configuration OpenAI
-          </CardTitle>
-          <CardDescription>
+          </GlassCardTitle>
+          <GlassCardDescription>
             Configurez la clé API OpenAI pour l'ensemble de la plateforme
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </GlassCardDescription>
+        </GlassCardHeader>
+        <GlassCardContent className="space-y-4">
           {/* Current Status */}
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-blue-500 mt-0.5" />
+              <Info className="h-5 w-5 text-primary mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm font-medium">État actuel</p>
                 {keyStatus?.configured ? (
@@ -148,12 +148,12 @@ export default function AdminPage() {
                       ✓ Clé API configurée
                     </p>
                     {keyStatus.masked && (
-                      <p className="text-xs text-gray-500 font-mono mt-1">
+                      <p className="text-xs text-neutral font-mono mt-1">
                         {keyStatus.masked}
                       </p>
                     )}
                     {keyStatus.lastUpdated && (
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-neutral mt-1">
                         Dernière mise à jour: {new Date(keyStatus.lastUpdated).toLocaleString('fr-FR')}
                       </p>
                     )}
@@ -181,7 +181,7 @@ export default function AdminPage() {
                 placeholder="sk-proj-..."
                 className="font-mono text-sm mt-1"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-neutral mt-1">
                 Format: sk-proj-... (disponible sur{' '}
                 <a
                   href="https://platform.openai.com/api-keys"
@@ -211,7 +211,7 @@ export default function AdminPage() {
                   {keyStatus?.configured ? 'Mettre à jour' : 'Configurer'}
                 </>
               )}
-            </Button>
+            </GradientButton>
           </form>
 
           {/* Security Notice */}
@@ -222,28 +222,28 @@ export default function AdminPage() {
               Elle est utilisée par l'agent IA pour interagir avec OpenAI au nom de tous les utilisateurs.
             </AlertDescription>
           </Alert>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
+        <GlassCard>
+          <GlassCardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Utilisateurs</p>
                 <p className="text-3xl font-bold mt-2">{stats?.totalUsers || 0}</p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-neutral mt-1">
                   {stats?.activeUsersLast30Days || 0} actifs (30j)
                 </p>
               </div>
-              <Users className="h-12 w-12 text-blue-500 opacity-20" />
+              <Users className="h-12 w-12 text-primary opacity-20" />
             </div>
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
 
-        <Card>
-          <CardContent className="p-6">
+        <GlassCard>
+          <GlassCardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Sites WordPress</p>
@@ -251,11 +251,11 @@ export default function AdminPage() {
               </div>
               <Globe className="h-12 w-12 text-green-500 opacity-20" />
             </div>
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
 
-        <Card>
-          <CardContent className="p-6">
+        <GlassCard>
+          <GlassCardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Conversations</p>
@@ -263,11 +263,11 @@ export default function AdminPage() {
               </div>
               <MessageSquare className="h-12 w-12 text-purple-500 opacity-20" />
             </div>
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
 
-        <Card>
-          <CardContent className="p-6">
+        <GlassCard>
+          <GlassCardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Agent IA</p>
@@ -279,18 +279,18 @@ export default function AdminPage() {
                   )}
                 </p>
               </div>
-              <Shield className="h-12 w-12 text-blue-500 opacity-20" />
+              <Shield className="h-12 w-12 text-primary opacity-20" />
             </div>
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
       </div>
 
       {/* Help Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Guide de configuration</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      <GlassCard>
+        <GlassCardHeader>
+          <GlassCardTitle className="text-lg">Guide de configuration</GlassCardTitle>
+        </GlassCardHeader>
+        <GlassCardContent className="space-y-3">
           <div className="space-y-2 text-sm">
             <p className="font-medium">1. Obtenir une clé API OpenAI</p>
             <p className="text-gray-600 ml-4">
@@ -322,8 +322,8 @@ export default function AdminPage() {
               Testez le chat avec un site WordPress pour vérifier que tout fonctionne.
             </p>
           </div>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
     </div>
   )
 }

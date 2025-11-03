@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { apiClient } from '@/lib/api-client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { GlassCard, GlassCardContent, GlassCardDescription, GlassCardHeader, GlassCardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -169,57 +169,57 @@ export default function AuditPage() {
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Total actions</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <GlassCard>
+            <GlassCardHeader className="pb-2">
+              <GlassCardTitle className="text-sm font-medium text-gray-600">Total actions</GlassCardTitle>
+            </GlassCardHeader>
+            <GlassCardContent>
               <div className="flex items-center justify-between">
                 <div className="text-2xl font-bold">{stats.totalActions}</div>
-                <Activity className="h-8 w-8 text-gray-400" />
+                <Activity className="h-8 w-8 text-muted-foreground" />
               </div>
-              <p className="text-xs text-gray-500 mt-1">{days} derniers jours</p>
-            </CardContent>
-          </Card>
+              <p className="text-xs text-neutral mt-1">{days} derniers jours</p>
+            </GlassCardContent>
+          </GlassCard>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Succès</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <GlassCard>
+            <GlassCardHeader className="pb-2">
+              <GlassCardTitle className="text-sm font-medium text-gray-600">Succès</GlassCardTitle>
+            </GlassCardHeader>
+            <GlassCardContent>
               <div className="flex items-center justify-between">
                 <div className="text-2xl font-bold text-green-600">{stats.successfulActions}</div>
                 <CheckCircle2 className="h-8 w-8 text-green-400" />
               </div>
-              <p className="text-xs text-gray-500 mt-1">{stats.successRate}% de réussite</p>
-            </CardContent>
-          </Card>
+              <p className="text-xs text-neutral mt-1">{stats.successRate}% de réussite</p>
+            </GlassCardContent>
+          </GlassCard>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Échecs</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <GlassCard>
+            <GlassCardHeader className="pb-2">
+              <GlassCardTitle className="text-sm font-medium text-gray-600">Échecs</GlassCardTitle>
+            </GlassCardHeader>
+            <GlassCardContent>
               <div className="flex items-center justify-between">
                 <div className="text-2xl font-bold text-red-600">{stats.failedActions}</div>
                 <XCircle className="h-8 w-8 text-red-400" />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-neutral mt-1">
                 {stats.totalActions > 0
                   ? ((stats.failedActions / stats.totalActions) * 100).toFixed(1)
                   : 0}% du total
               </p>
-            </CardContent>
-          </Card>
+            </GlassCardContent>
+          </GlassCard>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Période</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <GlassCard>
+            <GlassCardHeader className="pb-2">
+              <GlassCardTitle className="text-sm font-medium text-gray-600">Période</GlassCardTitle>
+            </GlassCardHeader>
+            <GlassCardContent>
               <div className="flex items-center justify-between">
                 <div className="text-2xl font-bold">{days}j</div>
-                <Clock className="h-8 w-8 text-gray-400" />
+                <Clock className="h-8 w-8 text-muted-foreground" />
               </div>
               <div className="flex gap-1 mt-2">
                 {[7, 14, 30].map((d) => (
@@ -234,19 +234,19 @@ export default function AuditPage() {
                   </button>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </GlassCardContent>
+          </GlassCard>
         </div>
       )}
 
       {/* Category and Action Stats */}
       {stats && (stats.byCategory.length > 0 || stats.byAction.length > 0) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Actions par catégorie</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <GlassCard>
+            <GlassCardHeader>
+              <GlassCardTitle className="text-lg">Actions par catégorie</GlassCardTitle>
+            </GlassCardHeader>
+            <GlassCardContent>
               <div className="space-y-2">
                 {stats.byCategory.map((item) => (
                   <div key={item.category} className="flex items-center justify-between">
@@ -257,14 +257,14 @@ export default function AuditPage() {
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </GlassCardContent>
+          </GlassCard>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Actions par type</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <GlassCard>
+            <GlassCardHeader>
+              <GlassCardTitle className="text-lg">Actions par type</GlassCardTitle>
+            </GlassCardHeader>
+            <GlassCardContent>
               <div className="space-y-2">
                 {stats.byAction.map((item) => (
                   <div key={item.action} className="flex items-center justify-between">
@@ -273,20 +273,20 @@ export default function AuditPage() {
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </GlassCardContent>
+          </GlassCard>
         </div>
       )}
 
       {/* Filters */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center">
+      <GlassCard className="mb-6">
+        <GlassCardHeader>
+          <GlassCardTitle className="text-lg flex items-center">
             <Filter className="h-5 w-5 mr-2" />
             Filtres
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </GlassCardTitle>
+        </GlassCardHeader>
+        <GlassCardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Site</label>
@@ -345,8 +345,8 @@ export default function AuditPage() {
               </select>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
 
       {/* Logs List */}
       {loading && page === 0 ? (
@@ -362,8 +362,8 @@ export default function AuditPage() {
         </Alert>
       ) : (
         <>
-          <Card>
-            <CardContent className="p-0">
+          <GlassCard>
+            <GlassCardContent className="p-0">
               <div className="divide-y">
                 {logs.map((log) => (
                   <div key={log.id} className="p-4 hover:bg-gray-50 transition-colors">
@@ -379,7 +379,7 @@ export default function AuditPage() {
                             {categoryLabels[log.category] || log.category}
                           </Badge>
                           <Badge variant="outline">{actionLabels[log.action] || log.action}</Badge>
-                          <span className="text-sm text-gray-500">{formatDate(log.createdAt)}</span>
+                          <span className="text-sm text-neutral">{formatDate(log.createdAt)}</span>
                         </div>
                         <p className="text-sm text-gray-700 mb-1">
                           <strong>Intention :</strong> {log.intent}
@@ -390,7 +390,7 @@ export default function AuditPage() {
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium text-gray-700">{log.site.name}</p>
-                        <p className="text-xs text-gray-500">{log.site.url}</p>
+                        <p className="text-xs text-neutral">{log.site.url}</p>
                       </div>
                     </div>
                     {!log.success && (
@@ -403,8 +403,8 @@ export default function AuditPage() {
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </GlassCardContent>
+          </GlassCard>
 
           {/* Pagination */}
           {totalPages > 1 && (
@@ -421,7 +421,7 @@ export default function AuditPage() {
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Précédent
-                </Button>
+                </GradientButton>
                 <Button
                   variant="outline"
                   size="sm"
@@ -430,7 +430,7 @@ export default function AuditPage() {
                 >
                   Suivant
                   <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
+                </GradientButton>
               </div>
             </div>
           )}

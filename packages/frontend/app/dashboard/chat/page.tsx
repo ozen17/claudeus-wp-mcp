@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { GradientButton } from "@/components/ui/gradient-button"
+import { GlassCard, GlassCardContent } from "@/components/ui/glass-card"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -190,7 +190,7 @@ export default function ChatPage() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-                <Sparkles className="h-8 w-8 text-blue-500" />
+                <Sparkles className="h-8 w-8 text-primary" />
                 Assistant WordPress IA
               </h1>
               <p className="text-gray-600">
@@ -199,9 +199,9 @@ export default function ChatPage() {
             </div>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <HelpCircle className="h-5 w-5 text-gray-400" />
-                </Button>
+                <GradientButton variant="ghost" size="icon">
+                  <HelpCircle className="h-5 w-5 text-muted-foreground" />
+                </GradientButton>
               </TooltipTrigger>
               <TooltipContent>
                 <p className="max-w-xs">
@@ -250,8 +250,8 @@ export default function ChatPage() {
         </div>
 
         {/* Messages */}
-        <Card className="flex-1 overflow-hidden flex flex-col">
-          <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
+        <GlassCard className="flex-1 overflow-hidden flex flex-col">
+          <GlassCardContent className="flex-1 overflow-y-auto p-6 space-y-4">
             {messages.length === 0 ? (
               <div className="h-full flex items-center justify-center">
                 <div className="max-w-4xl w-full">
@@ -272,7 +272,7 @@ export default function ChatPage() {
                   {/* Example Questions */}
                   <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg p-6">
                     <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                      <Sparkles className="h-5 w-5 text-blue-500" />
+                      <Sparkles className="h-5 w-5 text-primary" />
                       💡 Questions d'exemple - Cliquez pour essayer !
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -366,7 +366,7 @@ export default function ChatPage() {
                       <Bot className="h-5 w-5 text-white" />
                     </div>
                     <div className="bg-gray-100 border border-gray-200 rounded-lg px-4 py-3 flex items-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+                      <Loader2 className="h-5 w-5 animate-spin text-primary" />
                       <span className="text-sm text-gray-600">L'assistant réfléchit...</span>
                     </div>
                   </div>
@@ -375,13 +375,13 @@ export default function ChatPage() {
                 <div ref={messagesEndRef} />
               </>
             )}
-          </CardContent>
+          </GlassCardContent>
 
           {/* Input */}
           <div className="border-t border-gray-200 p-4 bg-gray-50">
             {messages.length > 0 && (
               <div className="mb-3 flex flex-wrap gap-2">
-                <p className="text-xs text-gray-500 w-full mb-1">💡 Suggestions rapides :</p>
+                <p className="text-xs text-neutral w-full mb-1">💡 Suggestions rapides :</p>
                 {['Résume les dernières activités', 'Quels sont mes produits les plus vendus ?', 'Crée un brouillon d\'article'].map((suggestion, i) => (
                   <button
                     key={i}
@@ -418,7 +418,7 @@ export default function ChatPage() {
                     ) : (
                       <Send className="h-4 w-4" />
                     )}
-                  </Button>
+                  </GradientButton>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Envoyer le message (ou appuyez sur Entrée)</p>
@@ -431,15 +431,15 @@ export default function ChatPage() {
               </p>
             )}
             {selectedSite && !loading && (
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-neutral mt-2">
                 ✨ <strong>Astuce :</strong> Vous pouvez me demander n'importe quoi en langage naturel !
               </p>
             )}
           </div>
-        </Card>
+        </GlassCard>
 
         {/* Help */}
-        <div className="mt-4 flex items-center justify-center gap-6 text-xs text-gray-500">
+        <div className="mt-4 flex items-center justify-center gap-6 text-xs text-neutral">
           <div>
             💡 Configurez les{' '}
             <Link href="/dashboard/policies" className="text-blue-600 hover:underline font-medium">

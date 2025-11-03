@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { GradientButton } from "@/components/ui/gradient-button"
+import { GlassCard, GlassCardContent, GlassCardDescription, GlassCardHeader, GlassCardTitle } from "@/components/ui/glass-card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -109,7 +109,7 @@ export default function SitesPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold mb-2">WordPress Sites</h1>
-          <p className="text-gray-400">Manage your WordPress sites</p>
+          <p className="text-muted-foreground">Manage your WordPress sites</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -118,11 +118,11 @@ export default function SitesPage() {
           >
             <Sparkles className="h-4 w-4 mr-2" />
             Configuration guidée
-          </Button>
-          <Button onClick={() => setShowAddForm(!showAddForm)} variant="outline">
+          </GradientButton>
+          <GradientButton onClick={() => setShowAddForm(!showAddForm)} variant="outline">
             <Plus className="h-4 w-4 mr-2" />
             Add Site
-          </Button>
+          </GradientButton>
         </div>
       </div>
 
@@ -143,7 +143,7 @@ export default function SitesPage() {
               >
                 <Sparkles className="h-3 w-3 mr-1" />
                 Commencer à discuter avec l'assistant
-              </Button>
+              </GradientButton>
               <Button
                 size="sm"
                 variant="outline"
@@ -151,7 +151,7 @@ export default function SitesPage() {
                 onClick={() => router.push('/dashboard/policies')}
               >
                 Configurer les permissions
-              </Button>
+              </GradientButton>
               <Button
                 size="sm"
                 variant="ghost"
@@ -159,7 +159,7 @@ export default function SitesPage() {
                 onClick={() => setShowSuccessMessage(false)}
               >
                 Masquer ce message
-              </Button>
+              </GradientButton>
             </div>
           </AlertDescription>
         </Alert>
@@ -176,14 +176,14 @@ export default function SitesPage() {
 
       {/* Add Site Form */}
       {showAddForm && (
-        <Card className="bg-gray-900 border-gray-800 mb-6">
-          <CardHeader>
-            <CardTitle>Add WordPress Site</CardTitle>
-            <CardDescription>
+        <GlassCard className="glass-card border-border mb-6">
+          <GlassCardHeader>
+            <GlassCardTitle>Add WordPress Site</GlassCardTitle>
+            <GlassCardDescription>
               Connect a new WordPress site using an application password
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </GlassCardDescription>
+          </GlassCardHeader>
+          <GlassCardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {formError && (
                 <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-md text-sm">
@@ -240,36 +240,36 @@ export default function SitesPage() {
               </div>
 
               <div className="flex gap-2">
-                <Button type="submit" disabled={submitting}>
+                <GradientButton type="submit" disabled={submitting}>
                   {submitting ? "Adding..." : "Add Site"}
-                </Button>
-                <Button type="button" variant="outline" onClick={() => setShowAddForm(false)}>
+                </GradientButton>
+                <GradientButton type="button" variant="outline" onClick={() => setShowAddForm(false)}>
                   Cancel
-                </Button>
+                </GradientButton>
               </div>
             </form>
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
       )}
 
       {/* Sites List */}
       {sites.length === 0 ? (
-        <Card className="bg-gray-900 border-gray-800">
-          <CardContent className="py-12 text-center">
+        <GlassCard className="glass-card border-border">
+          <GlassCardContent className="py-12 text-center">
             <Globe className="h-12 w-12 text-gray-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No sites yet</h3>
-            <p className="text-gray-400 mb-4">Add your first WordPress site to get started</p>
-            <Button onClick={() => setShowAddForm(true)}>
+            <p className="text-muted-foreground mb-4">Add your first WordPress site to get started</p>
+            <GradientButton onClick={() => setShowAddForm(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add Site
-            </Button>
-          </CardContent>
-        </Card>
+            </GradientButton>
+          </GlassCardContent>
+        </GlassCard>
       ) : (
         <div className="grid gap-4">
           {sites.map((site) => (
-            <Card key={site.id} className="bg-gray-900 border-gray-800">
-              <CardContent className="pt-6">
+            <GlassCard key={site.id} className="glass-card border-border">
+              <GlassCardContent className="pt-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
@@ -284,11 +284,11 @@ export default function SitesPage() {
                       href={site.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-blue-500 hover:underline"
+                      className="text-sm text-primary hover:underline"
                     >
                       {site.url}
                     </a>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
+                    <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                       <span>Username: {site.username}</span>
                       <span>Added: {new Date(site.createdAt).toLocaleDateString()}</span>
                     </div>
@@ -301,18 +301,18 @@ export default function SitesPage() {
                     >
                       <TestTube className="h-4 w-4 mr-2" />
                       Test
-                    </Button>
+                    </GradientButton>
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={() => handleDelete(site.id)}
                     >
                       <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
+                    </GradientButton>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </GlassCardContent>
+            </GlassCard>
           ))}
         </div>
       )}

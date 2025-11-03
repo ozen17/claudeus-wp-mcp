@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { GlassCard, GlassCardContent, GlassCardDescription, GlassCardHeader, GlassCardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
@@ -232,12 +232,12 @@ export default function PoliciesPage() {
       )}
 
       {/* Site selector */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Site WordPress</CardTitle>
-          <CardDescription>Sélectionnez le site à configurer</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <GlassCard className="mb-6">
+        <GlassCardHeader>
+          <GlassCardTitle>Site WordPress</GlassCardTitle>
+          <GlassCardDescription>Sélectionnez le site à configurer</GlassCardDescription>
+        </GlassCardHeader>
+        <GlassCardContent>
           <select
             value={selectedSite}
             onChange={(e) => setSelectedSite(e.target.value)}
@@ -249,8 +249,8 @@ export default function PoliciesPage() {
               </option>
             ))}
           </select>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
 
       {/* Categories */}
       <div className="space-y-4">
@@ -260,14 +260,14 @@ export default function PoliciesPage() {
           const isExpanded = expandedCategories.has(categoryInfo.category)
 
           return (
-            <Card key={categoryInfo.category} className="overflow-hidden">
+            <GlassCard key={categoryInfo.category} className="overflow-hidden">
               <div
                 className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50"
                 onClick={() => toggleCategory(categoryInfo.category)}
               >
                 <div className="flex items-center space-x-4 flex-1">
                   <div className={`p-2 rounded-lg ${rule?.isEnabled ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                    <IconComponent className={`h-6 w-6 ${rule?.isEnabled ? 'text-blue-600' : 'text-gray-400'}`} />
+                    <IconComponent className={`h-6 w-6 ${rule?.isEnabled ? 'text-blue-600' : 'text-muted-foreground'}`} />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg">{categoryInfo.displayName}</h3>
@@ -280,9 +280,9 @@ export default function PoliciesPage() {
                       onClick={(e) => e.stopPropagation()}
                     />
                     {isExpanded ? (
-                      <ChevronUp className="h-5 w-5 text-gray-400" />
+                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
                     ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-400" />
+                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
                     )}
                   </div>
                 </div>
@@ -411,17 +411,17 @@ export default function PoliciesPage() {
                   </div>
                 </div>
               )}
-            </Card>
+            </GlassCard>
           )
         })}
       </div>
 
       {/* Help section */}
-      <Card className="mt-6 bg-blue-50 border-blue-200">
-        <CardHeader>
-          <CardTitle className="text-blue-900">💡 Comment ça marche ?</CardTitle>
-        </CardHeader>
-        <CardContent className="text-blue-800 space-y-2">
+      <GlassCard className="mt-6 bg-blue-50 border-blue-200">
+        <GlassCardHeader>
+          <GlassCardTitle className="text-blue-900">💡 Comment ça marche ?</GlassCardTitle>
+        </GlassCardHeader>
+        <GlassCardContent className="text-blue-800 space-y-2">
           <p>
             • <strong>Catégories</strong> : Activez/désactivez des groupes d'outils (Contenu, Médias, WooCommerce...)
           </p>
@@ -434,8 +434,8 @@ export default function PoliciesPage() {
           <p>
             • <strong>Sécurité</strong> : Les actions destructrices (suppressions) nécessitent toujours une confirmation
           </p>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
     </div>
   )
 }

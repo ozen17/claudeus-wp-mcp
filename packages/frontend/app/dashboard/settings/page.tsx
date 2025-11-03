@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { GradientButton } from "@/components/ui/gradient-button"
+import { GlassCard, GlassCardContent, GlassCardDescription, GlassCardHeader, GlassCardTitle } from "@/components/ui/glass-card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/hooks/use-auth"
@@ -71,17 +71,17 @@ export default function SettingsPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Settings</h1>
-        <p className="text-gray-400">Manage your account settings</p>
+        <p className="text-muted-foreground">Manage your account settings</p>
       </div>
 
       <div className="max-w-2xl space-y-6">
         {/* Profile Settings */}
-        <Card className="bg-gray-900 border-gray-800">
-          <CardHeader>
-            <CardTitle>Profile</CardTitle>
-            <CardDescription>Update your profile information</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <GlassCard className="glass-card border-border">
+          <GlassCardHeader>
+            <GlassCardTitle>Profile</GlassCardTitle>
+            <GlassCardDescription>Update your profile information</GlassCardDescription>
+          </GlassCardHeader>
+          <GlassCardContent>
             <form onSubmit={handleProfileSubmit} className="space-y-4">
               {profileError && (
                 <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-md text-sm">
@@ -104,7 +104,7 @@ export default function SettingsPage() {
                   disabled
                   className="bg-gray-800"
                 />
-                <p className="text-xs text-gray-400">Email cannot be changed</p>
+                <p className="text-xs text-muted-foreground">Email cannot be changed</p>
               </div>
 
               <div className="space-y-2">
@@ -118,20 +118,20 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <Button type="submit" disabled={submitting}>
+              <GradientButton type="submit" disabled={submitting}>
                 {submitting ? "Saving..." : "Save Changes"}
-              </Button>
+              </GradientButton>
             </form>
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
 
         {/* Password Settings */}
-        <Card className="bg-gray-900 border-gray-800">
-          <CardHeader>
-            <CardTitle>Password</CardTitle>
-            <CardDescription>Change your password</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <GlassCard className="glass-card border-border">
+          <GlassCardHeader>
+            <GlassCardTitle>Password</GlassCardTitle>
+            <GlassCardDescription>Change your password</GlassCardDescription>
+          </GlassCardHeader>
+          <GlassCardContent>
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               {passwordError && (
                 <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-md text-sm">
@@ -181,12 +181,12 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <Button type="submit" disabled={submitting}>
+              <GradientButton type="submit" disabled={submitting}>
                 {submitting ? "Changing..." : "Change Password"}
-              </Button>
+              </GradientButton>
             </form>
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
       </div>
     </div>
   )

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/gradient-button"
+import { GlassCard, GlassCardContent, GlassCardDescription, GlassCardHeader, GlassCardTitle } from "@/components/ui/glass-card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -224,7 +224,7 @@ export default function SiteSetupWizard() {
         {/* Header */}
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-3">
-            <Sparkles className="h-8 w-8 text-blue-500" />
+            <Sparkles className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold">Assistant de configuration</h1>
           </div>
           <p className="text-gray-600">
@@ -236,8 +236,8 @@ export default function SiteSetupWizard() {
         </div>
 
         {/* Progress Steps */}
-        <Card>
-          <CardContent className="pt-6">
+        <GlassCard>
+          <GlassCardContent className="pt-6">
             <div className="flex items-center justify-between">
               {STEPS.map((step, index) => (
                 <div key={step.id} className="flex items-center">
@@ -261,7 +261,7 @@ export default function SiteSetupWizard() {
                     </div>
                     <div className="mt-3 text-center max-w-[120px]">
                       <p className={`text-sm font-medium ${
-                        currentStep >= step.id ? 'text-gray-900' : 'text-gray-500'
+                        currentStep >= step.id ? 'text-gray-900' : 'text-neutral'
                       }`}>
                         {step.title}
                       </p>
@@ -277,24 +277,24 @@ export default function SiteSetupWizard() {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
 
         {/* Step Content */}
-        <Card>
-          <CardHeader>
+        <GlassCard>
+          <GlassCardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="flex items-center gap-2">
+                <GlassCardTitle className="flex items-center gap-2">
                   <span className="text-2xl">{STEPS[currentStep - 1].emoji}</span>
                   Étape {currentStep}/{STEPS.length}: {STEPS[currentStep - 1].title}
-                </CardTitle>
-                <CardDescription>{STEPS[currentStep - 1].description}</CardDescription>
+                </GlassCardTitle>
+                <GlassCardDescription>{STEPS[currentStep - 1].description}</GlassCardDescription>
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" size="icon">
-                    <HelpCircle className="h-5 w-5 text-gray-400" />
+                    <HelpCircle className="h-5 w-5 text-muted-foreground" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -302,8 +302,8 @@ export default function SiteSetupWizard() {
                 </TooltipContent>
               </Tooltip>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
+          </GlassCardHeader>
+          <GlassCardContent className="space-y-6">
             {/* Step 1: Download Plugin */}
             {currentStep === 1 && (
               <div className="space-y-4">
@@ -340,7 +340,7 @@ export default function SiteSetupWizard() {
                 <div className="space-y-4">
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                     <h4 className="font-semibold mb-4 flex items-center gap-2">
-                      <ImageIcon className="h-5 w-5 text-blue-500" />
+                      <ImageIcon className="h-5 w-5 text-primary" />
                       📥 Installation du plugin
                     </h4>
 
@@ -359,7 +359,7 @@ export default function SiteSetupWizard() {
                             <Download className="h-4 w-4 mr-2" />
                             Télécharger le plugin (.zip)
                           </Button>
-                          <p className="text-xs text-gray-500 mt-2">
+                          <p className="text-xs text-neutral mt-2">
                             💾 Le fichier téléchargé s'appellera quelque chose comme "wordpress-mcp-plugin.zip"
                           </p>
                         </div>
@@ -476,7 +476,7 @@ export default function SiteSetupWizard() {
                 <div className="space-y-4">
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                     <h4 className="font-semibold mb-4 flex items-center gap-2">
-                      <Key className="h-5 w-5 text-blue-500" />
+                      <Key className="h-5 w-5 text-primary" />
                       🔑 Génération du token JWT
                     </h4>
 
@@ -577,7 +577,7 @@ export default function SiteSetupWizard() {
                       <Label htmlFor="siteName">Nom du site</Label>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="max-w-xs">
@@ -601,7 +601,7 @@ export default function SiteSetupWizard() {
                         </p>
                       )}
                       {!siteName && (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-neutral">
                           💡 Ce nom est juste pour vous aider à reconnaître votre site dans Claudeus
                         </p>
                       )}
@@ -614,7 +614,7 @@ export default function SiteSetupWizard() {
                       <Label htmlFor="siteUrl">URL du site WordPress</Label>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="max-w-xs">
@@ -644,7 +644,7 @@ export default function SiteSetupWizard() {
                         </p>
                       )}
                       {!siteUrl && (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-neutral">
                           💡 Commencez par taper "https://" puis le nom de votre site
                         </p>
                       )}
@@ -657,7 +657,7 @@ export default function SiteSetupWizard() {
                       <Label htmlFor="jwtToken">Token JWT</Label>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="max-w-xs">
@@ -688,7 +688,7 @@ export default function SiteSetupWizard() {
                           {copied ? (
                             <Check className="h-4 w-4 text-green-600" />
                           ) : (
-                            <Copy className="h-4 w-4 text-gray-400" />
+                            <Copy className="h-4 w-4 text-muted-foreground" />
                           )}
                         </button>
                       )}
@@ -700,7 +700,7 @@ export default function SiteSetupWizard() {
                         </p>
                       )}
                       {!jwtToken && (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-neutral">
                           💡 Faites un clic droit dans le champ et choisissez "Coller", ou utilisez Ctrl+V (Cmd+V sur Mac)
                         </p>
                       )}
@@ -734,7 +734,7 @@ export default function SiteSetupWizard() {
                 {/* Configuration Summary */}
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-3">
                   <h4 className="font-semibold flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-blue-500" />
+                    <CheckCircle className="h-5 w-5 text-primary" />
                     📋 Récapitulatif de votre configuration
                   </h4>
                   <div className="bg-white rounded p-3 space-y-2 text-sm border border-gray-200">
@@ -858,8 +858,8 @@ export default function SiteSetupWizard() {
                 )}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
 
         {/* Navigation Buttons */}
         <div className="flex justify-between items-center">
@@ -873,7 +873,7 @@ export default function SiteSetupWizard() {
             Étape précédente
           </Button>
 
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-neutral">
             Étape {currentStep} sur {STEPS.length}
           </div>
 
@@ -910,8 +910,8 @@ export default function SiteSetupWizard() {
         </div>
 
         {/* Help Footer */}
-        <Card className="bg-blue-50 border-blue-200">
-          <CardContent className="pt-4">
+        <GlassCard className="bg-blue-50 border-blue-200">
+          <GlassCardContent className="pt-4">
             <div className="flex items-start gap-3">
               <HelpCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-blue-800">
@@ -932,8 +932,8 @@ export default function SiteSetupWizard() {
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </GlassCardContent>
+        </GlassCard>
       </div>
     </TooltipProvider>
   )

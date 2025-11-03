@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { GlassCard, GlassCardContent, GlassCardDescription, GlassCardHeader, GlassCardTitle } from "@/components/ui/glass-card"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
@@ -140,7 +140,7 @@ export default function FAQPage() {
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-3">
-          <HelpCircle className="h-10 w-10 text-blue-500" />
+          <HelpCircle className="h-10 w-10 text-primary" />
           <h1 className="text-4xl font-bold">Foire aux Questions (FAQ)</h1>
         </div>
         <p className="text-gray-600 text-lg max-w-2xl mx-auto">
@@ -149,10 +149,10 @@ export default function FAQPage() {
       </div>
 
       {/* Search */}
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50">
-        <CardContent className="pt-6">
+      <GlassCard className="bg-gradient-to-r from-blue-50 to-purple-50">
+        <GlassCardContent className="pt-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -163,8 +163,8 @@ export default function FAQPage() {
           <p className="text-xs text-gray-600 mt-2 text-center">
             💡 Tapez quelques mots-clés pour trouver la réponse rapidement
           </p>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
 
       {/* Quick Help */}
       <Alert className="bg-green-50 border-green-200">
@@ -194,47 +194,47 @@ export default function FAQPage() {
                 const isExpanded = expandedItems.has(globalIndex)
 
                 return (
-                  <Card key={index} className="hover:shadow-md transition-shadow">
-                    <CardHeader
+                  <GlassCard key={index} className="hover:shadow-md transition-shadow">
+                    <GlassCardHeader
                       className="cursor-pointer"
                       onClick={() => toggleItem(globalIndex)}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-start gap-3 flex-1">
-                          <Icon className="h-5 w-5 text-blue-500 flex-shrink-0 mt-1" />
+                          <Icon className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
                           <div>
-                            <div className="text-xs text-gray-500 mb-1">{item.category}</div>
-                            <CardTitle className="text-base">{item.question}</CardTitle>
+                            <div className="text-xs text-neutral mb-1">{item.category}</div>
+                            <GlassCardTitle className="text-base">{item.question}</GlassCardTitle>
                           </div>
                         </div>
                         {isExpanded ? (
-                          <ChevronUp className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                          <ChevronUp className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                         ) : (
-                          <ChevronDown className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                          <ChevronDown className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                         )}
                       </div>
-                    </CardHeader>
+                    </GlassCardHeader>
                     {isExpanded && (
-                      <CardContent>
+                      <GlassCardContent>
                         <p className="text-gray-700 leading-relaxed">{item.answer}</p>
-                      </CardContent>
+                      </GlassCardContent>
                     )}
-                  </Card>
+                  </GlassCard>
                 )
               })}
             </>
           ) : (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <HelpCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <GlassCard>
+              <GlassCardContent className="py-12 text-center">
+                <HelpCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <p className="text-gray-600">
                   Aucun résultat trouvé pour "{searchQuery}"
                 </p>
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-neutral mt-2">
                   Essayez avec d'autres mots-clés ou parcourez les catégories ci-dessous
                 </p>
-              </CardContent>
-            </Card>
+              </GlassCardContent>
+            </GlassCard>
           )}
         </div>
       ) : (
@@ -247,7 +247,7 @@ export default function FAQPage() {
             return (
               <div key={category}>
                 <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                  <Icon className="h-6 w-6 text-blue-500" />
+                  <Icon className="h-6 w-6 text-primary" />
                   {category}
                 </h2>
                 <div className="space-y-3">
@@ -257,29 +257,29 @@ export default function FAQPage() {
                     const ItemIcon = item.icon
 
                     return (
-                      <Card key={index} className="hover:shadow-md transition-shadow">
-                        <CardHeader
+                      <GlassCard key={index} className="hover:shadow-md transition-shadow">
+                        <GlassCardHeader
                           className="cursor-pointer"
                           onClick={() => toggleItem(globalIndex)}
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex items-start gap-3 flex-1">
-                              <ItemIcon className="h-5 w-5 text-blue-500 flex-shrink-0 mt-1" />
-                              <CardTitle className="text-base">{item.question}</CardTitle>
+                              <ItemIcon className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
+                              <GlassCardTitle className="text-base">{item.question}</GlassCardTitle>
                             </div>
                             {isExpanded ? (
-                              <ChevronUp className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                              <ChevronUp className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                             ) : (
-                              <ChevronDown className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                              <ChevronDown className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                             )}
                           </div>
-                        </CardHeader>
+                        </GlassCardHeader>
                         {isExpanded && (
-                          <CardContent>
+                          <GlassCardContent>
                             <p className="text-gray-700 leading-relaxed">{item.answer}</p>
-                          </CardContent>
+                          </GlassCardContent>
                         )}
-                      </Card>
+                      </GlassCard>
                     )
                   })}
                 </div>
@@ -290,17 +290,17 @@ export default function FAQPage() {
       )}
 
       {/* Contact Support */}
-      <Card className="bg-blue-50 border-blue-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-blue-500" />
+      <GlassCard className="bg-blue-50 border-blue-200">
+        <GlassCardHeader>
+          <GlassCardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5 text-primary" />
             Vous ne trouvez pas votre réponse ?
-          </CardTitle>
-          <CardDescription className="text-gray-700">
+          </GlassCardTitle>
+          <GlassCardDescription className="text-gray-700">
             Notre équipe support est là pour vous aider !
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
+          </GlassCardDescription>
+        </GlassCardHeader>
+        <GlassCardContent className="space-y-3">
           <div className="flex items-start gap-3">
             <div className="bg-blue-100 rounded-full p-2">
               <span className="text-xl">📧</span>
@@ -345,8 +345,8 @@ export default function FAQPage() {
               <p className="text-xs text-gray-600 mt-1">Lun-Ven 9h-18h (heure de Paris)</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
     </div>
   )
 }
