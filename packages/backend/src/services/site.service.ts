@@ -35,6 +35,7 @@ export class SiteService {
         isActive: true,
         isHealthy: true,
         lastChecked: true,
+        enabledMcpTools: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -57,6 +58,7 @@ export class SiteService {
         isActive: true,
         isHealthy: true,
         lastChecked: true,
+        enabledMcpTools: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -237,5 +239,32 @@ export class SiteService {
         400
       );
     }
+  }
+
+  /**
+   * Update enabled MCP tools for a site
+   */
+  async updateMcpTools(siteId: string, userId: string, enabledTools: string[]) {
+    const site = await prisma.site.findFirst({
+      where: { id: siteId, userId },
+    });
+
+    if (!site) {
+      throw new AppError('Site not found', 404);
+    }
+
+    return prisma.site.update({
+      where: { id: siteId },
+      data: {
+        enabledMcpTools: enabledTools,
+      },
+      select: {
+        id: true,
+        name: true,
+        url: true,
+        enabledMcpTools: true,
+        updatedAt: true,
+      },
+    });
   }
 }

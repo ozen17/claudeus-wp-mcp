@@ -361,7 +361,22 @@ export class PolicyService {
    * This is passed to the Agent to inform it of permissions
    */
   async getPolicyContext(siteId: string, userId: string) {
-    const enabledTools = await this.getEnabledTools(siteId);
+    // Get tools enabled by category policies
+    const categoryEnabledTools = await this.getEnabledTools(siteId);
+
+    // Get individually enabled MCP tools from site configuration
+    const siteEnabledTools = await this.mcpClient.getEnabledToolsForSite(siteId);
+
+    // Combine both: tools must be enabled by BOTH category policy AND individual configuration
+    let enabledTools: string[];
+    if (siteEnabledTools.length === 0) {
+      // No individual configuration: use category-based tools (backward compatibility)
+      enabledTools = categoryEnabledTools;
+    } else {
+      // Filter category tools by individually enabled tools (intersection)
+      enabledTools = categoryEnabledTools.filter(tool => siteEnabledTools.includes(tool));
+    }
+
     const policy = await this.getSitePolicy(siteId);
 
     // Build constraints summary

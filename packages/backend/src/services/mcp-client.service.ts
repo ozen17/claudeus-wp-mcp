@@ -123,6 +123,21 @@ export class McpClientService {
     toolCall: McpToolCall
   ): Promise<McpToolResult> {
     try {
+      // Check if the tool is enabled for this site
+      const isEnabled = await this.isToolEnabled(siteId, toolCall.tool);
+
+      if (!isEnabled) {
+        logger.warn('Attempted to call disabled MCP tool', {
+          siteId,
+          tool: toolCall.tool,
+        });
+
+        return {
+          success: false,
+          error: `L'outil "${toolCall.tool}" n'est pas activé pour ce site. Veuillez activer cet outil dans les paramètres du site.`,
+        };
+      }
+
       const client = await this.createClient(siteId);
 
       logger.info('Calling MCP tool', {
@@ -207,7 +222,41 @@ export class McpClientService {
   }
 
   /**
+   * Get enabled tools for a site based on configuration
+   * Returns all tools if no configuration exists, or filtered list if configured
+   */
+  async getEnabledToolsForSite(siteId: string): Promise<string[]> {
+    const site = await prisma.site.findUnique({
+      where: { id: siteId },
+      select: { enabledMcpTools: true },
+    });
+
+    if (!site) {
+      throw new AppError('Site not found', 404);
+    }
+
+    // If no configuration exists or empty array, return empty array (user must configure)
+    // Frontend will initialize with all tools enabled by default
+    return site.enabledMcpTools || [];
+  }
+
+  /**
+   * Check if a specific tool is enabled for a site
+   */
+  async isToolEnabled(siteId: string, toolName: string): Promise<boolean> {
+    const enabledTools = await this.getEnabledToolsForSite(siteId);
+
+    // If no tools configured, default to all enabled (for backward compatibility)
+    if (enabledTools.length === 0) {
+      return true;
+    }
+
+    return enabledTools.includes(toolName);
+  }
+
+  /**
    * List available tools on a WordPress site
+   * Filtered by site configuration (enabledMcpTools)
    */
   async listAvailableTools(siteId: string): Promise<string[]> {
     try {
@@ -215,8 +264,18 @@ export class McpClientService {
 
       // Get list of tools from the plugin
       const response = await client.get('/tools');
+      const allTools = response.data.tools || [];
 
-      return response.data.tools || [];
+      // Filter by site configuration
+      const enabledTools = await this.getEnabledToolsForSite(siteId);
+
+      // If no configuration, return all tools (backward compatibility)
+      if (enabledTools.length === 0) {
+        return allTools;
+      }
+
+      // Return only enabled tools that are also available in the plugin
+      return allTools.filter((tool: string) => enabledTools.includes(tool));
     } catch (error) {
       logger.error('Failed to list MCP tools', { siteId, error });
       return [];

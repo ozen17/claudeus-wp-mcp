@@ -131,6 +131,9 @@ model Site {
   mcpJwtTokenIv       String?   // IV for encryption
   mcpPluginVersion    String?   // Version of installed MCP plugin
 
+  // MCP Tools configuration (which tools are enabled for this site)
+  enabledMcpTools     String[]  @default([]) // Array of enabled tool IDs (ex: ["wordpress_create_post", "wordpress_list_posts"])
+
   // Legacy auth (for migration period)
   username    String?
   passwordEncrypted String?

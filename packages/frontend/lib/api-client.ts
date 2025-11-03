@@ -152,6 +152,11 @@ class ApiClient {
     return response.data.data
   }
 
+  async updateSiteMcpTools(siteId: string, enabledTools: string[]) {
+    const response = await this.client.patch(`/sites/${siteId}/mcp-tools`, { enabledTools })
+    return response.data.data
+  }
+
   // Chat (v2 - OpenAI only, siteId required)
   async streamChat(
     data: {

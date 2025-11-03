@@ -26,6 +26,10 @@ const updateSiteSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
+const updateMcpToolsSchema = z.object({
+  enabledTools: z.array(z.string()),
+});
+
 /**
  * GET /api/v1/sites
  * Get all user's WordPress sites
@@ -125,6 +129,28 @@ router.post(
 
     res.json({
       data: result,
+    });
+  })
+);
+
+/**
+ * PATCH /api/v1/sites/:id/mcp-tools
+ * Update enabled MCP tools for a site
+ */
+router.patch(
+  '/:id/mcp-tools',
+  asyncHandler(async (req: Request, res: Response) => {
+    const data = updateMcpToolsSchema.parse(req.body);
+
+    const site = await siteService.updateMcpTools(
+      req.params.id,
+      req.user!.id,
+      data.enabledTools
+    );
+
+    res.json({
+      message: 'MCP tools configuration updated successfully',
+      data: site,
     });
   })
 );
