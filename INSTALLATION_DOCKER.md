@@ -123,9 +123,9 @@ exit
 
 🎉 **C'est prêt !** Ouvrez votre navigateur :
 
-- **Frontend (Interface utilisateur)** : [http://localhost:3000](http://localhost:3000)
-- **Backend API** : [http://localhost:3001](http://localhost:3001)
-- **Health Check** : [http://localhost:3001/health](http://localhost:3001/health)
+- **Frontend (Interface utilisateur)** : [http://localhost:3002](http://localhost:3002)
+- **Backend API** : [http://localhost:3003](http://localhost:3003)
+- **Health Check** : [http://localhost:3003/health](http://localhost:3003/health)
 
 ---
 
@@ -223,7 +223,7 @@ python3 -m http.server 8000
 
 ### Option 1 : Via l'interface (Inscription normale)
 
-1. Aller sur [http://localhost:3000](http://localhost:3000)
+1. Aller sur [http://localhost:3002](http://localhost:3002)
 2. Cliquer sur "S'inscrire"
 3. Créer un compte
 
@@ -243,17 +243,17 @@ UPDATE users SET "isAdmin" = true WHERE email = 'votre@email.com';
 
 ### ❌ Erreur : "Port already in use"
 
-Un service utilise déjà le port 3000 ou 3001.
+Un service utilise déjà le port 3002 ou 3003.
 
 **Solution :**
 ```bash
 # Trouver le processus qui utilise le port
-lsof -i :3000  # Mac/Linux
-netstat -ano | findstr :3000  # Windows
+lsof -i :3002  # Mac/Linux
+netstat -ano | findstr :3002  # Windows
 
 # Ou changer les ports dans docker-compose.yml
 ports:
-  - "3005:3000"  # Utiliser 3005 au lieu de 3000
+  - "3005:3000"  # Utiliser 3005 au lieu de 3002
 ```
 
 ### ❌ Erreur : "Connection refused to database"
@@ -287,7 +287,7 @@ Le backend n'est pas accessible.
 **Solution :**
 ```bash
 # Vérifier que le backend tourne
-curl http://localhost:3001/health
+curl http://localhost:3003/health
 
 # Vérifier les logs
 docker-compose logs backend
