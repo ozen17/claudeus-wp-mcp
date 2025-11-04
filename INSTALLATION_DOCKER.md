@@ -107,21 +107,9 @@ Cette commande va :
 
 **Première fois ? Ça prendra 5-10 minutes** ⏳
 
-### Étape 5️⃣ : Initialiser la Base de Données
+**💡 Note :** Les migrations de base de données se font **automatiquement** au démarrage du backend !
 
-Une fois les conteneurs démarrés, initialiser Prisma :
-
-```bash
-# Accéder au conteneur backend
-docker exec -it claudeus-backend sh
-
-# À l'intérieur du conteneur :
-npx prisma migrate deploy
-npx prisma db seed  # Optionnel : données de test
-exit
-```
-
-### Étape 6️⃣ : Accéder à l'Application
+### Étape 5️⃣ : Accéder à l'Application
 
 🎉 **C'est prêt !** Ouvrez votre navigateur :
 
