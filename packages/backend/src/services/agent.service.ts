@@ -121,11 +121,11 @@ export class AgentService {
   }
 
   /**
-   * Get or create the WordPress AI Assistant Agent
+   * Get the configured WordPress AI Assistant (from admin settings)
+   * The assistant must be created on platform.openai.com and its ID configured in admin dashboard
    */
   async getOrCreateAgent(): Promise<string> {
-    // En production, on pourrait stocker l'agent ID en base de données
-    // Pour le MVP, on crée un nouvel agent à chaque démarrage
+    // Return cached assistant ID if available
     if (this.agentId) {
       return this.agentId;
     }
@@ -133,72 +133,44 @@ export class AgentService {
     try {
       const client = await this.getClient();
 
-      // Créer un nouvel assistant avec le system prompt
-      const assistant = await client.beta.assistants.create({
-        name: 'WordPress AI Assistant',
-        description:
-          'Expert WordPress/WooCommerce assistant that helps users manage their websites through natural conversation',
-        model: 'gpt-4o',
-        instructions: SYSTEM_PROMPT,
-        tools: [
-          {
-            type: 'function',
-            function: {
-              name: 'execute_wordpress_action',
-              description:
-                'Execute a WordPress/WooCommerce action via MCP tools. This function relays to the backend which will call the appropriate MCP tool on the user\'s WordPress site.',
-              parameters: {
-                type: 'object',
-                properties: {
-                  category: {
-                    type: 'string',
-                    enum: [
-                      'APPEARANCE_THEMES',
-                      'MENUS',
-                      'CONTENT',
-                      'MEDIA',
-                      'WOOCOMMERCE',
-                      'USERS',
-                      'SETTINGS',
-                    ],
-                    description: 'The category of action to perform',
-                  },
-                  action: {
-                    type: 'string',
-                    enum: ['READ', 'CREATE', 'UPDATE', 'DELETE', 'PUBLISH'],
-                    description: 'The type of action to perform',
-                  },
-                  tool: {
-                    type: 'string',
-                    description:
-                      'The specific MCP tool to call (e.g., "get_posts", "wc.products.create")',
-                  },
-                  params: {
-                    type: 'object',
-                    description:
-                      'Parameters to pass to the MCP tool (varies by tool)',
-                  },
-                  requireConfirm: {
-                    type: 'boolean',
-                    description:
-                      'Whether this action requires user confirmation (true for destructive operations)',
-                  },
-                },
-                required: ['category', 'action', 'tool', 'params'],
-              },
-            },
-          },
-        ],
-        temperature: 0.7,
-        top_p: 1,
-      });
+      // Get assistant ID from system configuration
+      const assistantId = await this.systemConfigService.getAssistantId();
 
-      this.agentId = assistant.id;
-      logger.info(`Created OpenAI Assistant: ${this.agentId}`);
-      return this.agentId;
-    } catch (error) {
-      logger.error('Failed to create OpenAI Assistant', { error });
-      throw new AppError('Failed to initialize AI Assistant', 500);
+      // Verify that the assistant exists on OpenAI
+      try {
+        await client.beta.assistants.retrieve(assistantId);
+      } catch (retrieveError: any) {
+        logger.error('Assistant ID not found on OpenAI', {
+          assistantId,
+          error: retrieveError.message,
+        });
+        throw new AppError(
+          `Assistant ID "${assistantId}" not found on OpenAI. Please verify your configuration.`,
+          500
+        );
+      }
+
+      // Cache the assistant ID
+      this.agentId = assistantId;
+      logger.info('Using configured OpenAI Assistant', { assistantId });
+
+      return assistantId;
+    } catch (error: any) {
+      if (error instanceof AppError) throw error;
+
+      logger.error('Failed to retrieve Assistant', { error: error.message });
+
+      if (error.message?.includes('not configured')) {
+        throw new AppError(
+          'OpenAI Assistant ID not configured. Please configure it in Admin Dashboard → Configuration.',
+          500
+        );
+      }
+
+      throw new AppError(
+        'Failed to retrieve OpenAI Assistant. Please check your Assistant ID configuration.',
+        500
+      );
     }
   }
 

@@ -135,6 +135,91 @@ export class SystemConfigService {
   }
 
   /**
+   * Get OpenAI Assistant ID (from DB or fallback to env)
+   */
+  async getAssistantId(): Promise<string> {
+    try {
+      const config = await prisma.systemConfig.findUnique({
+        where: { key: 'openai_assistant_id' },
+      });
+
+      if (config && config.value) {
+        return config.value as string;
+      }
+
+      // Fallback to environment variable
+      const envAssistantId = process.env.OPENAI_ASSISTANT_ID;
+      if (envAssistantId) {
+        logger.info('Using OpenAI Assistant ID from environment variable');
+        return envAssistantId;
+      }
+
+      throw new AppError(
+        'OpenAI Assistant ID not configured. Please configure it in Admin Settings.',
+        500
+      );
+    } catch (error: any) {
+      if (error instanceof AppError) throw error;
+
+      logger.error('Failed to get Assistant ID', { error });
+      throw new AppError('Failed to retrieve Assistant ID configuration', 500);
+    }
+  }
+
+  /**
+   * Set OpenAI Assistant ID (admin only)
+   */
+  async setAssistantId(assistantId: string): Promise<void> {
+    try {
+      // Validate Assistant ID format
+      if (!assistantId.startsWith('asst_')) {
+        throw new AppError('Invalid Assistant ID format (must start with "asst_")', 400);
+      }
+
+      // Store in database (not encrypted, it's not sensitive)
+      await prisma.systemConfig.upsert({
+        where: { key: 'openai_assistant_id' },
+        create: {
+          key: 'openai_assistant_id',
+          value: assistantId,
+          description: 'OpenAI Assistant ID for the Agent',
+        },
+        update: {
+          value: assistantId,
+          updatedAt: new Date(),
+        },
+      });
+
+      logger.info('OpenAI Assistant ID updated successfully', { assistantId });
+    } catch (error: any) {
+      if (error instanceof AppError) throw error;
+
+      logger.error('Failed to set Assistant ID', { error });
+      throw new AppError('Failed to update Assistant ID configuration', 500);
+    }
+  }
+
+  /**
+   * Check if Assistant ID is configured
+   */
+  async isAssistantIdConfigured(): Promise<boolean> {
+    try {
+      const config = await prisma.systemConfig.findUnique({
+        where: { key: 'openai_assistant_id' },
+      });
+
+      if (config && config.value) {
+        return true;
+      }
+
+      // Check environment variable
+      return !!process.env.OPENAI_ASSISTANT_ID;
+    } catch (error) {
+      return !!process.env.OPENAI_ASSISTANT_ID;
+    }
+  }
+
+  /**
    * Get all system configurations (admin only)
    */
   async getAllConfigs(): Promise<Record<string, any>> {

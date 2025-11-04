@@ -33,6 +33,7 @@ export default function AdminPage() {
   const [stats, setStats] = useState<any>(null)
   const [keyStatus, setKeyStatus] = useState<any>(null)
   const [newApiKey, setNewApiKey] = useState("")
+  const [newAssistantId, setNewAssistantId] = useState("")
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -61,6 +62,21 @@ export default function AdminPage() {
       await apiClient.setOpenAIKey(newApiKey)
       await fetchAdminData()
       setNewApiKey("")
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Erreur lors de la sauvegarde")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleSaveAssistantId = async () => {
+    if (!newAssistantId.trim()) return
+    setSaving(true)
+    try {
+      await apiClient.setAssistantId(newAssistantId)
+      await fetchAdminData()
+      setNewAssistantId("")
+      alert("✅ Assistant ID sauvegardé avec succès")
     } catch (error: any) {
       alert(error.response?.data?.message || "Erreur lors de la sauvegarde")
     } finally {
@@ -129,8 +145,11 @@ export default function AdminPage() {
           keyStatus={keyStatus}
           newApiKey={newApiKey}
           setNewApiKey={setNewApiKey}
+          newAssistantId={newAssistantId}
+          setNewAssistantId={setNewAssistantId}
           saving={saving}
-          onSave={handleSaveApiKey}
+          onSaveApiKey={handleSaveApiKey}
+          onSaveAssistantId={handleSaveAssistantId}
         />
       )}
       {activeTab === 'users' && <UsersTab />}
@@ -273,14 +292,15 @@ function OverviewTab({ stats }: { stats: any }) {
 // CONFIG TAB
 // ============================================
 
-function ConfigTab({ keyStatus, newApiKey, setNewApiKey, saving, onSave }: any) {
+function ConfigTab({ keyStatus, newApiKey, setNewApiKey, newAssistantId, setNewAssistantId, saving, onSaveApiKey, onSaveAssistantId }: any) {
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-3xl space-y-6">
+      {/* OpenAI API Key */}
       <GlassCard>
         <GlassCardHeader>
           <GlassCardTitle className="flex items-center gap-2">
             <Key className="h-5 w-5 text-primary" />
-            Configuration OpenAI
+            Clé API OpenAI
           </GlassCardTitle>
           <GlassCardDescription>
             Clé API partagée par tous les utilisateurs de la plateforme
@@ -325,29 +345,115 @@ function ConfigTab({ keyStatus, newApiKey, setNewApiKey, saving, onSave }: any) 
           </div>
 
           <GradientButton
-            onClick={onSave}
+            onClick={onSaveApiKey}
             disabled={saving || !newApiKey.trim()}
             className="w-full"
           >
             {saving ? "Enregistrement..." : "Enregistrer la Clé"}
           </GradientButton>
+        </GlassCardContent>
+      </GlassCard>
+
+      {/* OpenAI Assistant ID */}
+      <GlassCard>
+        <GlassCardHeader>
+          <GlassCardTitle className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-accent" />
+            Assistant OpenAI (Obligatoire)
+          </GlassCardTitle>
+          <GlassCardDescription>
+            ID de l'assistant créé sur platform.openai.com/assistants
+          </GlassCardDescription>
+        </GlassCardHeader>
+        <GlassCardContent className="space-y-6">
+          {/* Current Status */}
+          <div className="p-4 rounded-xl bg-white/5 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-muted-foreground">Assistant Actuel</span>
+              {keyStatus.assistantId ? (
+                <Tag variant="success">
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  Configuré
+                </Tag>
+              ) : (
+                <Tag variant="warning">
+                  <AlertCircle className="h-3 w-3 mr-1" />
+                  Non configuré
+                </Tag>
+              )}
+            </div>
+            {keyStatus.assistantId && (
+              <p className="text-sm font-mono text-neutral">{keyStatus.assistantId}</p>
+            )}
+          </div>
+
+          {/* Update Assistant ID */}
+          <div className="space-y-3">
+            <Label htmlFor="assistantId">Nouvel Assistant ID</Label>
+            <Input
+              id="assistantId"
+              type="text"
+              placeholder="asst_abc123xyz..."
+              value={newAssistantId}
+              onChange={(e) => setNewAssistantId(e.target.value)}
+              className="glass-card border-border/50 focus:border-primary font-mono"
+            />
+            <p className="text-xs text-neutral">
+              ℹ️ Créez votre assistant sur{" "}
+              <a
+                href="https://platform.openai.com/assistants"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                platform.openai.com/assistants
+              </a>
+            </p>
+          </div>
+
+          <GradientButton
+            onClick={onSaveAssistantId}
+            disabled={saving || !newAssistantId.trim()}
+            className="w-full"
+            variant="accent"
+          >
+            {saving ? "Enregistrement..." : "Enregistrer l'Assistant ID"}
+          </GradientButton>
 
           {/* Info */}
-          <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
+          <div className="p-4 rounded-xl bg-accent/10 border border-accent/20">
             <div className="flex gap-3">
-              <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
               <div className="space-y-2 text-sm">
-                <p className="font-medium text-primary">Important :</p>
-                <ul className="list-disc list-inside space-y-1 text-neutral">
-                  <li>Cette clé est utilisée par tous les utilisateurs</li>
-                  <li>Assurez-vous d'avoir des crédits OpenAI suffisants</li>
-                  <li>Surveillez votre utilisation depuis le dashboard OpenAI</li>
-                </ul>
+                <p className="font-medium text-accent">Comment configurer :</p>
+                <ol className="list-decimal list-inside space-y-1 text-neutral">
+                  <li>Créez un assistant sur platform.openai.com</li>
+                  <li>Configurez le model (gpt-4o recommandé)</li>
+                  <li>Ajoutez les instructions (system prompt)</li>
+                  <li>Ajoutez la function "execute_wordpress_action"</li>
+                  <li>Copiez l'Assistant ID (commence par "asst_")</li>
+                </ol>
               </div>
             </div>
           </div>
         </GlassCardContent>
       </GlassCard>
+
+      {/* General Info */}
+      <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
+        <div className="flex gap-3">
+          <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+          <div className="space-y-2 text-sm">
+            <p className="font-medium text-primary">Important :</p>
+            <ul className="list-disc list-inside space-y-1 text-neutral">
+              <li>La clé API et l'Assistant ID sont utilisés par tous les utilisateurs</li>
+              <li>Assurez-vous d'avoir des crédits OpenAI suffisants</li>
+              <li>Surveillez votre utilisation depuis le dashboard OpenAI</li>
+              <li>L'assistant peut être modifié sur OpenAI sans redéployer le SaaS</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

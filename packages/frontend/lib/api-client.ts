@@ -348,6 +348,11 @@ class ApiClient {
     return response.data
   }
 
+  async setAssistantId(assistantId: string) {
+    const response = await this.client.put('/admin/config/assistant-id', { assistantId })
+    return response.data
+  }
+
   // Stats & Analytics
   async getAdminStats() {
     const response = await this.client.get('/admin/stats')

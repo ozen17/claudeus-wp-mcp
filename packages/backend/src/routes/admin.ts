@@ -70,7 +70,7 @@ router.put(
 
 /**
  * GET /api/v1/admin/config/openai-key/status
- * Check if OpenAI key is configured (admin only)
+ * Check if OpenAI key and Assistant ID are configured (admin only)
  */
 router.get(
   '/config/openai-key/status',
@@ -79,10 +79,44 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const isConfigured = await systemConfigService.isOpenAIKeyConfigured();
     const maskedKey = await systemConfigService.getMaskedOpenAIKey();
+    const isAssistantConfigured = await systemConfigService.isAssistantIdConfigured();
+
+    let assistantId = null;
+    try {
+      assistantId = await systemConfigService.getAssistantId();
+    } catch (error) {
+      // Assistant ID not configured yet
+    }
 
     res.json({
       configured: isConfigured,
       maskedKey,
+      assistantId,
+      assistantConfigured: isAssistantConfigured,
+    });
+  })
+);
+
+/**
+ * PUT /api/v1/admin/config/assistant-id
+ * Set OpenAI Assistant ID (admin only)
+ */
+router.put(
+  '/config/assistant-id',
+  authenticate,
+  requireAdmin,
+  asyncHandler(async (req: Request, res: Response) => {
+    const { assistantId } = req.body;
+
+    if (!assistantId || typeof assistantId !== 'string') {
+      throw new AppError('Assistant ID is required', 400);
+    }
+
+    await systemConfigService.setAssistantId(assistantId);
+
+    res.json({
+      message: 'OpenAI Assistant ID configured successfully',
+      assistantId,
     });
   })
 );

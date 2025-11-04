@@ -1,0 +1,12 @@
+{
+  "name": "@claudeus-wp/shared",
+  "version": "1.0.0",
+  "description": "Shared types and configuration for Claudeus WordPress AI Assistant SaaS",
+  "type": "module",
+  "main": "mcp-tools-config.ts",
+  "types": "mcp-tools-config.ts",
+  "exports": {
+    ".": "./mcp-tools-config.ts",
+    "./mcp-tools-config": "./mcp-tools-config.ts"
+  }
+}

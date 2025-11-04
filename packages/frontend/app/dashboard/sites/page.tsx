@@ -7,7 +7,7 @@ import { GlassCard, GlassCardContent, GlassCardDescription, GlassCardHeader, Gla
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Plus, Globe, Trash2, TestTube, CheckCircle2, XCircle, Sparkles, Info, PartyPopper } from "lucide-react"
+import { Plus, Globe, Trash2, TestTube, CheckCircle2, XCircle, Sparkles, Info, PartyPopper, Settings } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
 
 interface Site {
@@ -136,7 +136,7 @@ export default function SitesPage() {
               Vous pouvez maintenant profiter de toutes les fonctionnalités de Claudeus !
             </p>
             <div className="flex flex-wrap gap-3 text-xs">
-              <Button
+              <GradientButton
                 size="sm"
                 className="bg-green-600 hover:bg-green-700 h-8"
                 onClick={() => router.push('/dashboard/chat')}
@@ -144,7 +144,7 @@ export default function SitesPage() {
                 <Sparkles className="h-3 w-3 mr-1" />
                 Commencer à discuter avec l'assistant
               </GradientButton>
-              <Button
+              <GradientButton
                 size="sm"
                 variant="outline"
                 className="border-green-300 text-green-700 hover:bg-green-100 h-8"
@@ -152,7 +152,7 @@ export default function SitesPage() {
               >
                 Configurer les permissions
               </GradientButton>
-              <Button
+              <GradientButton
                 size="sm"
                 variant="ghost"
                 className="text-green-700 hover:bg-green-100 h-8"
@@ -294,15 +294,23 @@ export default function SitesPage() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button
+                    <GradientButton
                       size="sm"
-                      variant="outline"
+                      variant="primary"
+                      onClick={() => router.push(`/dashboard/sites/${site.id}`)}
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      Configurer
+                    </GradientButton>
+                    <GradientButton
+                      size="sm"
+                      variant="secondary"
                       onClick={() => handleTest(site.id)}
                     >
                       <TestTube className="h-4 w-4 mr-2" />
                       Test
                     </GradientButton>
-                    <Button
+                    <GradientButton
                       size="sm"
                       variant="ghost"
                       onClick={() => handleDelete(site.id)}
