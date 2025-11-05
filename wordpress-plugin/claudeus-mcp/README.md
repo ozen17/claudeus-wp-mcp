@@ -1,327 +1,536 @@
-# Claudeus MCP - WordPress AI Assistant Plugin
+# Claudeus MCP - Complete WordPress AI Assistant Plugin v2.0
 
-Plugin WordPress MCP (Model Context Protocol) permettant à l'assistant AI Claudeus de gérer votre site WordPress et WooCommerce via API REST sécurisée.
+Plugin WordPress MCP (Model Context Protocol) ultra-complet avec **200+ outils** pour une gestion totale de WordPress et WooCommerce via API REST sécurisée.
 
-## 🚀 Fonctionnalités
+## 🚀 Caractéristiques
 
-- **Authentification JWT sécurisée** - Protection de toutes les requêtes API
-- **47+ Outils MCP** - Gestion complète de WordPress et WooCommerce
-- **API REST moderne** - Endpoints standardisés et documentés
-- **Support WooCommerce** - Gestion des produits, commandes, clients et catégories
-- **Interface d'administration** - Page de configuration et documentation intégrée
-- **CORS configuré** - Compatible avec les applications SaaS externes
+- **200+ Outils MCP** organisés en 18 catégories
+- **Découverte automatique** des endpoints WordPress REST API natifs
+- **Extensions personnalisées** pour fonctionnalités avancées
+- **Authentification JWT** sécurisée
+- **Interface d'administration interactive** - Tools Explorer
+- **Support WooCommerce complet** (50+ endpoints)
+- **Architecture modulaire** et extensible
+- **Documentation exhaustive** intégrée
 
-## 📋 Prérequis
+## 📊 Outils Disponibles par Catégorie
 
-- WordPress 6.0 ou supérieur
-- PHP 7.4 ou supérieur
-- HTTPS recommandé (obligatoire en production)
-- WooCommerce 5.0+ (optionnel, pour les outils e-commerce)
+### 1. Content Management (30+ outils)
+**Gestion complète des contenus WordPress**
+
+- **Posts** : list, get, create, update, delete, revisions, autosaves
+- **Pages** : list, get, create, update, delete, revisions, autosaves
+- **Reusable Blocks** : list, get, create, update, delete, revisions
+
+**Endpoints natifs exposés**:
+- `GET /wp/v2/posts` - Liste des articles
+- `POST /wp/v2/posts` - Créer un article
+- `GET /wp/v2/posts/{id}` - Obtenir un article
+- `POST /wp/v2/posts/{id}` - Mettre à jour
+- `DELETE /wp/v2/posts/{id}` - Supprimer
+- `GET /wp/v2/posts/{id}/revisions` - Révisions
+- ... et 20+ autres endpoints
+
+**Extensions custom**:
+- `claudeus_wp_content__bulk_trash` - Déplacer plusieurs posts à la corbeille
+- `claudeus_wp_content__bulk_restore` - Restaurer depuis la corbeille
+- `claudeus_wp_content__duplicate_post` - Dupliquer un post/page
+- `claudeus_wp_content__export_content` - Exporter en JSON/XML
+
+### 2. Media Library (4+ outils)
+**Gestion de la bibliothèque de médias**
+
+- Get, upload, update, delete media files
+- Support des images, vidéos, PDF, documents
+
+**Endpoints**:
+- `GET /wp/v2/media` - Liste des médias
+- `POST /wp/v2/media` - Upload d'un fichier
+- `GET /wp/v2/media/{id}` - Détails d'un média
+- `POST /wp/v2/media/{id}` - Mettre à jour
+- `DELETE /wp/v2/media/{id}` - Supprimer
+
+### 3. WooCommerce Shop (50+ outils)
+**Gestion e-commerce complète**
+
+#### Products (15+ outils)
+- List, create, update, delete products
+- Product variations management
+- Product attributes
+- Stock management
+- Bulk operations
+
+**Endpoints**:
+- `GET /wc/v3/products`
+- `POST /wc/v3/products`
+- `GET /wc/v3/products/{id}`
+- `GET /wc/v3/products/{id}/variations`
+- `POST /wc/v3/products/batch` - Bulk operations
+
+**Custom**:
+- `claudeus_wp_wc__get_low_stock_products`
+- `claudeus_wp_wc__bulk_update_stock`
+
+#### Orders (10+ outils)
+- List, get, create, update orders
+- Order notes
+- Refunds management
+
+**Endpoints**:
+- `GET /wc/v3/orders`
+- `POST /wc/v3/orders`
+- `GET /wc/v3/orders/{id}`
+- `POST /wc/v3/orders/{id}/refunds`
+
+#### Customers (8+ outils)
+- Customer CRUD operations
+- Customer orders history
+- Download permissions
+
+**Endpoints**:
+- `GET /wc/v3/customers`
+- `POST /wc/v3/customers`
+- `GET /wc/v3/customers/{id}`
+
+#### Coupons (6+ outils)
+- Create, update, delete coupons
+- Coupon validation
+
+**Endpoints**:
+- `GET /wc/v3/coupons`
+- `POST /wc/v3/coupons`
+
+#### Shipping (8+ outils)
+- Shipping zones and methods
+- Shipping classes
+
+**Custom**:
+- `claudeus_wp_wc__get_shipping_zones`
+- `claudeus_wp_wc__configure_shipping_zone`
+
+#### Payment Gateways (5+ outils)
+**Custom**:
+- `claudeus_wp_wc__get_payment_gateways`
+- `claudeus_wp_wc__configure_payment_gateway`
+
+#### Reports (8+ outils)
+**Custom**:
+- `claudeus_wp_wc__get_reports_sales`
+- `claudeus_wp_wc__get_reports_top_products`
+- `claudeus_wp_wc__get_reports_customers`
+- `claudeus_wp_wc__get_abandoned_carts`
+
+### 4. Taxonomy Management (12+ outils)
+**Categories, tags et taxonomies personnalisées**
+
+- Categories CRUD
+- Tags CRUD
+- Custom taxonomies
+- Terms management
+
+**Endpoints**:
+- `GET /wp/v2/categories`
+- `POST /wp/v2/categories`
+- `GET /wp/v2/tags`
+- `POST /wp/v2/tags`
+- `GET /wp/v2/taxonomies`
+- `GET /wp/v2/{taxonomy}/{id}`
+
+### 5. User Management (10+ outils)
+**Gestion des utilisateurs et permissions**
+
+- Users CRUD
+- Roles and capabilities
+- Application passwords
+- User meta
+
+**Endpoints**:
+- `GET /wp/v2/users`
+- `POST /wp/v2/users`
+- `GET /wp/v2/users/{id}`
+- `GET /wp/v2/users/me`
+- `POST /wp/v2/users/{id}/application-passwords`
+- `GET /wp/v2/users/{id}/application-passwords`
+- `DELETE /wp/v2/users/{id}/application-passwords/{uuid}`
+
+### 6. Comment Management (8+ outils)
+**Modération des commentaires**
+
+- Comments CRUD
+- Approve, spam, trash
+- Comment replies
+
+**Endpoints**:
+- `GET /wp/v2/comments`
+- `POST /wp/v2/comments`
+- `GET /wp/v2/comments/{id}`
+- `POST /wp/v2/comments/{id}` (approve/spam)
+- `DELETE /wp/v2/comments/{id}`
+
+### 7. Menu Management (10+ outils)
+**Menus de navigation**
+
+- Classic menus CRUD
+- Menu items CRUD
+- Menu locations
+
+**Endpoints**:
+- `GET /wp/v2/menus`
+- `POST /wp/v2/menus`
+- `GET /wp/v2/menu-items`
+- `POST /wp/v2/menu-items`
+- `GET /wp/v2/menu-locations`
+
+### 8. Block Templates (10+ outils)
+**Full Site Editing (FSE)**
+
+- Templates CRUD
+- Template parts CRUD
+- Block patterns
+
+**Endpoints**:
+- `GET /wp/v2/templates`
+- `POST /wp/v2/templates`
+- `GET /wp/v2/template-parts`
+- `POST /wp/v2/template-parts`
+
+### 9. Global Styles (6+ outils)
+**Theme.json et styles globaux**
+
+- Get/update global styles
+- Theme variations
+- Revisions
+
+**Endpoints**:
+- `GET /wp/v2/global-styles/{id}`
+- `POST /wp/v2/global-styles/{id}`
+- `GET /wp/v2/global-styles/{id}/revisions`
+- `GET /wp/v2/themes/{stylesheet}/global-styles/variations`
+
+### 10. Block Patterns (3+ outils)
+**Motifs de blocs**
+
+- Get local patterns
+- Pattern categories
+- Pattern directory search
+
+**Endpoints**:
+- `GET /wp/v2/block-patterns/patterns`
+- `GET /wp/v2/block-patterns/categories`
+- `GET /wp/v2/pattern-directory/patterns`
+
+### 11. Theme Management (7+ outils)
+**Gestion des thèmes**
+
+- List themes
+- Get active theme
+- Activate theme
+- Theme customization
+- Custom CSS
+
+**Endpoints**:
+- `GET /wp/v2/themes`
+- `GET /wp/v2/themes/{stylesheet}`
+
+### 12. Plugin Management (5+ outils)
+**Gestion des extensions**
+
+- List plugins
+- Get plugin details
+- Activate/Deactivate
+- Delete plugins
+
+**Endpoints**:
+- `GET /wp/v2/plugins`
+- `POST /wp/v2/plugins`
+- `GET /wp/v2/plugins/{plugin}`
+- `POST /wp/v2/plugins/{plugin}` (activate)
+- `DELETE /wp/v2/plugins/{plugin}`
+
+### 13. Widget Management (7+ outils)
+**Sidebars et widgets**
+
+- Sidebars list
+- Widgets CRUD
+- Widget instances
+
+**Endpoints**:
+- `GET /wp/v2/sidebars`
+- `GET /wp/v2/widgets`
+- `POST /wp/v2/widgets`
+- `GET /wp/v2/widgets/{id}`
+- `POST /wp/v2/widgets/{id}`
+- `DELETE /wp/v2/widgets/{id}`
+
+### 14. Site Settings (5+ outils)
+**Configuration du site**
+
+- Get/update settings
+- Post types list
+- Post statuses
+- Timezone, language, etc.
+
+**Endpoints**:
+- `GET /wp/v2/settings`
+- `POST /wp/v2/settings`
+- `GET /wp/v2/types`
+- `GET /wp/v2/statuses`
+
+### 15. Site Health (8+ outils)
+**Diagnostics et santé du site**
+
+- Run health tests
+- Check updates
+- Directory sizes
+- Database optimization
+
+**Endpoints**:
+- `GET /wp-site-health/v1/tests/*`
+- `GET /wp-site-health/v1/directory-sizes`
+
+**Custom**:
+- `claudeus_wp_health__get_full_report`
+- `claudeus_wp_health__check_updates`
+- `claudeus_wp_health__optimize_database`
+- `claudeus_wp_health__clear_all_caches`
+
+### 16. Search & oEmbed (5+ outils)
+**Recherche et embeds**
+
+- Universal search
+- oEmbed provider
+- URL details
+
+**Endpoints**:
+- `GET /wp/v2/search`
+- `GET /oembed/1.0/embed`
+- `GET /oembed/1.0/proxy`
+
+### 17. Navigation API (10+ outils)
+**Block-based navigation**
+
+- Navigation menus (FSE)
+- Navigation items
+
+**Endpoints**:
+- `GET /wp/v2/navigation`
+- `POST /wp/v2/navigation`
+- `GET /wp/v2/navigation/{id}`
+- `POST /wp/v2/navigation/{id}`
+- `DELETE /wp/v2/navigation/{id}`
+
+### 18. API Discovery (2 outils)
+**Découverte de l'API**
+
+**Custom**:
+- `claudeus_wp_discovery__list_endpoints` - Liste tous les endpoints disponibles
+- `claudeus_wp_discovery__get_schema` - Obtient le schéma d'un endpoint
+
+---
 
 ## 🔧 Installation
 
-### Via Upload WordPress
+### Via WordPress Admin
 
 1. Téléchargez le dossier `claudeus-mcp`
-2. Compressez-le en fichier ZIP : `claudeus-mcp.zip`
-3. Dans WordPress, allez dans **Extensions → Ajouter**
-4. Cliquez sur **Téléverser une extension**
-5. Sélectionnez le fichier ZIP et cliquez sur **Installer maintenant**
-6. Activez le plugin
+2. Compressez en ZIP
+3. WordPress → Extensions → Ajouter → Téléverser
+4. Activez le plugin
 
 ### Via FTP
 
-1. Téléchargez le dossier `claudeus-mcp`
-2. Uploadez-le dans `/wp-content/plugins/`
-3. Activez le plugin depuis **Extensions** dans WordPress
+```bash
+# Uploader le dossier vers
+/wp-content/plugins/claudeus-mcp/
+```
 
 ## 🔑 Configuration
 
-### 1. Générer un token JWT
-
-Pour vous authentifier, envoyez une requête POST à :
+### 1. Génération de Token JWT
 
 ```bash
 POST https://votre-site.com/wp-json/claudeus-mcp/v1/auth/token
-Content-Type: application/json
 
 {
-  "username": "votre_username",
+  "username": "admin",
   "password": "votre_mot_de_passe"
 }
 ```
 
-Réponse :
-
-```json
-{
-  "success": true,
-  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "user": {
-    "id": 1,
-    "username": "admin",
-    "email": "admin@example.com",
-    "roles": ["administrator"]
-  },
-  "expires_at": 1234567890
-}
-```
-
-### 2. Utiliser le token
-
-Incluez le token dans toutes les requêtes vers les outils MCP :
+### 2. Utiliser le Token
 
 ```bash
 Authorization: Bearer {votre_token_jwt}
 ```
 
-## 📚 Outils MCP Disponibles
+### 3. Accéder au Tools Explorer
 
-### 📝 Articles (Posts) - 5 outils
+WordPress Admin → **Claudeus MCP** → **Tools Explorer**
 
-| Endpoint | Description |
-|----------|-------------|
-| `POST /tools/wordpress_list_posts` | Lister les articles |
-| `POST /tools/wordpress_get_post` | Consulter un article |
-| `POST /tools/wordpress_create_post` | Créer un article |
-| `POST /tools/wordpress_update_post` | Modifier un article |
-| `POST /tools/wordpress_delete_post` | Supprimer un article |
+Interface interactive pour explorer les 200+ outils disponibles avec:
+- 🔍 Recherche en temps réel
+- 📁 Filtrage par catégorie
+- 📊 Statistiques détaillées
+- 📋 Copie facile des noms d'outils
+- 📖 Documentation intégrée
 
-### 📄 Pages - 5 outils
+## 📚 Architecture du Plugin
 
-| Endpoint | Description |
-|----------|-------------|
-| `POST /tools/wordpress_list_pages` | Lister les pages |
-| `POST /tools/wordpress_get_page` | Consulter une page |
-| `POST /tools/wordpress_create_page` | Créer une page |
-| `POST /tools/wordpress_update_page` | Modifier une page |
-| `POST /tools/wordpress_delete_page` | Supprimer une page |
-
-### 🖼️ Médias - 4 outils
-
-| Endpoint | Description |
-|----------|-------------|
-| `POST /tools/wordpress_list_media` | Lister les médias |
-| `POST /tools/wordpress_get_media` | Consulter un média |
-| `POST /tools/wordpress_upload_media` | Télécharger un média (base64) |
-| `POST /tools/wordpress_delete_media` | Supprimer un média |
-
-### 👥 Utilisateurs - 5 outils
-
-| Endpoint | Description |
-|----------|-------------|
-| `POST /tools/wordpress_list_users` | Lister les utilisateurs |
-| `POST /tools/wordpress_get_user` | Consulter un utilisateur |
-| `POST /tools/wordpress_create_user` | Créer un utilisateur |
-| `POST /tools/wordpress_update_user` | Modifier un utilisateur |
-| `POST /tools/wordpress_delete_user` | Supprimer un utilisateur |
-
-### 💬 Commentaires - 5 outils
-
-| Endpoint | Description |
-|----------|-------------|
-| `POST /tools/wordpress_list_comments` | Lister les commentaires |
-| `POST /tools/wordpress_get_comment` | Consulter un commentaire |
-| `POST /tools/wordpress_approve_comment` | Approuver un commentaire |
-| `POST /tools/wordpress_spam_comment` | Marquer comme spam |
-| `POST /tools/wordpress_delete_comment` | Supprimer un commentaire |
-
-### 🧩 Extensions - 4 outils
-
-| Endpoint | Description |
-|----------|-------------|
-| `POST /tools/wordpress_list_plugins` | Lister les extensions |
-| `POST /tools/wordpress_get_plugin` | Consulter une extension |
-| `POST /tools/wordpress_activate_plugin` | Activer une extension |
-| `POST /tools/wordpress_deactivate_plugin` | Désactiver une extension |
-
-### 🎨 Thèmes - 3 outils
-
-| Endpoint | Description |
-|----------|-------------|
-| `POST /tools/wordpress_list_themes` | Lister les thèmes |
-| `POST /tools/wordpress_get_theme` | Consulter un thème |
-| `POST /tools/wordpress_activate_theme` | Activer un thème |
-
-### ⚙️ Réglages - 3 outils
-
-| Endpoint | Description |
-|----------|-------------|
-| `POST /tools/wordpress_get_site_info` | Informations du site |
-| `POST /tools/wordpress_update_settings` | Modifier les réglages |
-| `POST /tools/wordpress_get_site_health` | État de santé du site |
-
-### 🛒 WooCommerce - 13 outils
-
-| Endpoint | Description |
-|----------|-------------|
-| `POST /tools/wc_list_products` | Lister les produits |
-| `POST /tools/wc_create_product` | Créer un produit |
-| `POST /tools/wc_update_product` | Modifier un produit |
-| `POST /tools/wc_delete_product` | Supprimer un produit |
-| `POST /tools/wc_list_orders` | Lister les commandes |
-| `POST /tools/wc_get_order` | Consulter une commande |
-| `POST /tools/wc_update_order` | Modifier une commande |
-| `POST /tools/wc_list_customers` | Lister les clients |
-| `POST /tools/wc_create_customer` | Créer un client |
-| `POST /tools/wc_update_customer` | Modifier un client |
-| `POST /tools/wc_list_categories` | Lister les catégories |
-| `POST /tools/wc_create_category` | Créer une catégorie |
-| `POST /tools/wc_update_category` | Modifier une catégorie |
-
-## 📖 Exemples d'utilisation
-
-### Créer un article
-
-```bash
-POST https://votre-site.com/wp-json/claudeus-mcp/v1/tools/wordpress_create_post
-Authorization: Bearer {votre_token}
-Content-Type: application/json
-
-{
-  "title": "Mon premier article",
-  "content": "<p>Contenu de l'article...</p>",
-  "status": "publish",
-  "categories": [1, 3],
-  "tags": ["test", "demo"]
-}
+```
+claudeus-mcp/
+├── claudeus-mcp.php                # Fichier principal
+├── includes/
+│   ├── class-auth.php              # Authentification JWT
+│   ├── class-api-registry.php      # Registre des routes API
+│   ├── class-tool-registry.php     # Registre centralisé des outils
+│   ├── class-rest-proxy.php        # Proxy vers REST API natif
+│   ├── admin/
+│   │   ├── dashboard.php           # Dashboard principal
+│   │   └── tools-explorer.php      # Explorateur d'outils interactif
+│   └── endpoints/
+│       ├── content.php             # 30+ outils content
+│       ├── shop.php                # 50+ outils WooCommerce
+│       ├── health.php              # 8+ outils santé
+│       ├── discovery.php           # 2 outils découverte
+│       └── ... (18 catégories)
+├── assets/
+│   ├── css/admin.css
+│   └── js/admin.js
+└── README.md
 ```
 
-### Lister les produits WooCommerce
+## 🎯 Utilisation des Outils
+
+### Exemple 1: Créer un Article
 
 ```bash
-POST https://votre-site.com/wp-json/claudeus-mcp/v1/tools/wc_list_products
-Authorization: Bearer {votre_token}
-Content-Type: application/json
+POST /wp/v2/posts
+Authorization: Bearer {token}
 
 {
-  "per_page": 10,
-  "page": 1,
+  "title": "Mon article",
+  "content": "<p>Contenu...</p>",
   "status": "publish"
 }
 ```
 
-### Télécharger un média
+### Exemple 2: Lister les Produits WooCommerce
 
 ```bash
-POST https://votre-site.com/wp-json/claudeus-mcp/v1/tools/wordpress_upload_media
-Authorization: Bearer {votre_token}
-Content-Type: application/json
+GET /wc/v3/products?per_page=20
+Authorization: Bearer {token}
+```
 
-{
-  "filename": "image.jpg",
-  "file_data": "base64_encoded_image_data...",
-  "title": "Mon image",
-  "alt_text": "Description de l'image"
-}
+### Exemple 3: Rapport de Santé du Site
+
+```bash
+GET /claudeus-mcp/v1/tools/health__get_full_report
+Authorization: Bearer {token}
 ```
 
 ## 🔒 Sécurité
 
-### Bonnes pratiques
+- ✅ JWT Authentication obligatoire
+- ✅ Permissions WordPress natives respectées
+- ✅ Sanitization de toutes les entrées
+- ✅ CORS configuré
+- ✅ Rate limiting (recommandé)
+- ✅ HTTPS obligatoire en production
 
-- ✅ **Utilisez HTTPS** - Obligatoire en production
-- ✅ **Protégez vos tokens** - Ne les partagez jamais
-- ✅ **Permissions appropriées** - Utilisez des comptes avec les bonnes permissions
-- ✅ **Tokens expirables** - Les tokens JWT expirent après 24 heures
-- ✅ **Validation des données** - Toutes les données sont sanitizées
+## 🚀 Performance
 
-### Permissions WordPress requises
+Le plugin utilise:
+- **Découverte automatique** des endpoints (pas de duplication de code)
+- **Proxy intelligent** vers l'API WordPress native
+- **Cache** des définitions d'outils
+- **Architecture modulaire** chargée à la demande
 
-Les outils MCP respectent les permissions natives de WordPress :
+## 📖 Documentation
 
-- **Posts/Pages** : `edit_posts`, `edit_pages`
-- **Media** : `upload_files`
-- **Users** : `list_users`, `create_users`, `edit_users`, `delete_users`
-- **Comments** : `moderate_comments`
-- **Plugins/Themes** : `activate_plugins`, `switch_themes`
-- **Settings** : `manage_options`
-- **WooCommerce** : `manage_woocommerce`
+- **Tools Explorer** : Interface admin complète
+- **API Reference** : Documentation inline des 200+ outils
+- **Examples** : Exemples de requêtes pour chaque outil
+- **WordPress REST API Handbook** : https://developer.wordpress.org/rest-api/
 
 ## 🛠️ Développement
 
-### Structure du plugin
-
-```
-claudeus-mcp/
-├── claudeus-mcp.php          # Fichier principal
-├── includes/
-│   ├── class-auth.php        # Authentification JWT
-│   ├── class-api.php         # Gestionnaire API REST
-│   ├── admin-page.php        # Page d'administration
-│   └── endpoints/
-│       ├── posts.php         # Endpoints articles
-│       ├── pages.php         # Endpoints pages
-│       ├── media.php         # Endpoints médias
-│       ├── users.php         # Endpoints utilisateurs
-│       ├── comments.php      # Endpoints commentaires
-│       ├── plugins.php       # Endpoints extensions
-│       ├── themes.php        # Endpoints thèmes
-│       ├── settings.php      # Endpoints réglages
-│       └── woocommerce.php   # Endpoints WooCommerce
-├── assets/
-│   ├── css/
-│   │   └── admin.css         # Styles admin
-│   └── js/
-│       └── admin.js          # Scripts admin
-└── README.md                 # Documentation
-```
-
-### Hooks et Filtres
-
-Le plugin expose plusieurs hooks pour personnalisation :
+### Ajouter un outil custom
 
 ```php
-// Activer/désactiver CORS
-add_filter('claudeus_mcp_enable_cors', function($enabled) {
-    return true; // ou false pour désactiver
-});
+// Dans includes/class-tool-registry.php
 
-// Personnaliser la durée de validité des tokens (en secondes)
-add_filter('claudeus_mcp_token_expiration', function($expiration) {
-    return 86400; // 24 heures
-});
+$this->register_tool([
+    'name' => 'claudeus_wp_custom__my_tool',
+    'description' => 'Description de mon outil',
+    'category' => 'custom',
+    'endpoint' => 'custom',
+    'handler' => 'My_Custom_Handler::handle'
+]);
+```
+
+### Créer un endpoint custom
+
+```php
+// Dans includes/endpoints/custom.php
+
+class My_Custom_Endpoint {
+    public static function handle($request) {
+        // Votre logique
+        return new WP_REST_Response($data, 200);
+    }
+}
 ```
 
 ## ❓ FAQ
 
-### Le plugin fonctionne-t-il sans WooCommerce ?
+### Combien d'outils sont disponibles exactement ?
 
-Oui ! Les outils WooCommerce sont simplement désactivés si WooCommerce n'est pas installé. Tous les autres outils fonctionnent normalement.
+**200+** outils répartis en 18 catégories. Le nombre exact dépend:
+- Des endpoints WordPress REST API natifs disponibles (varie selon la version)
+- Des plugins installés (WooCommerce ajoute 50+ outils)
+- Des extensions custom activées
 
-### Puis-je utiliser ce plugin sur plusieurs sites ?
+### Le plugin fonctionne sans WooCommerce ?
 
-Oui, le plugin peut être installé sur autant de sites WordPress que vous le souhaitez.
+Oui ! Les 50+ outils WooCommerce sont simplement désactivés si WooCommerce n'est pas installé. Les 150+ autres outils fonctionnent normalement.
 
-### Les tokens JWT sont-ils sécurisés ?
+### Comment voir tous les outils disponibles ?
 
-Oui, les tokens sont signés avec une clé secrète générée automatiquement lors de l'activation du plugin. Ils expirent après 24 heures.
+Allez dans **WordPress Admin → Claudeus MCP → Tools Explorer**. Vous verrez une interface interactive avec tous les outils, leur catégorie, description, et endpoints.
 
-### Comment désactiver temporairement l'API ?
+### Les outils utilisent-ils l'API WordPress native ?
 
-Désactivez simplement le plugin depuis **Extensions** dans WordPress.
+Oui ! Le plugin expose de manière sécurisée le REST API WordPress natif (qui contient déjà 150-200 endpoints) et ajoute des extensions custom pour les fonctionnalités manquantes.
 
-## 🐛 Support et Contribution
+## 🐛 Support
 
-- **Issues** : [GitHub Issues](https://github.com/ozen17/claudeus-wp-mcp/issues)
-- **Documentation** : [GitHub Repository](https://github.com/ozen17/claudeus-wp-mcp)
+- **GitHub Issues**: [claudeus-wp-mcp/issues](https://github.com/ozen17/claudeus-wp-mcp/issues)
+- **Documentation**: Intégrée dans le plugin
+- **Tools Explorer**: Interface admin interactive
 
 ## 📄 Licence
 
-MIT License - Voir le fichier LICENSE pour plus de détails.
+MIT License
 
-## 👨‍💻 Auteur
+## 👨‍💻 Auteurs
 
 Développé par l'équipe **Claudeus** pour le SaaS WordPress AI Assistant.
 
 ## 🔄 Changelog
 
-### Version 1.0.0 (2024-11-05)
+### Version 2.0.0 (2024-11-05)
 
-- 🎉 Version initiale
-- ✅ 47 outils MCP implémentés
-- ✅ Authentification JWT
-- ✅ Support WordPress complet
-- ✅ Support WooCommerce complet
-- ✅ Interface d'administration
-- ✅ Documentation complète
+- 🎉 Architecture complètement repensée
+- ✅ 200+ outils MCP (vs 47 en v1)
+- ✅ Découverte automatique des endpoints WordPress natifs
+- ✅ Interface Tools Explorer interactive
+- ✅ Support WooCommerce complet (50+ outils)
+- ✅ Extensions custom pour fonctionnalités avancées
+- ✅ Documentation exhaustive intégrée
+- ✅ Architecture modulaire et extensible
+- ✅ Proxy intelligent REST API
+- ✅ Registre centralisé des outils
+
+---
+
+**Total**: 200+ outils MCP pour une gestion complète de WordPress et WooCommerce 🚀
