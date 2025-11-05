@@ -1,0 +1,90 @@
+/**
+ * Styles CSS pour la page d'administration Claudeus MCP
+ */
+
+.claudeus-mcp-admin {
+    max-width: 1200px;
+    margin: 20px 0;
+}
+
+.claudeus-mcp-card {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    border-radius: 4px;
+}
+
+.claudeus-mcp-card h2 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.claudeus-mcp-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.claudeus-mcp-status.success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.claudeus-mcp-status.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.claudeus-mcp-status.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.claudeus-mcp-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.claudeus-mcp-info-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.claudeus-mcp-info-table td:first-child {
+    font-weight: 600;
+    width: 200px;
+}
+
+.claudeus-mcp-code {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.claudeus-mcp-endpoint-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.claudeus-mcp-endpoint-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.claudeus-mcp-endpoint-list code {
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+}

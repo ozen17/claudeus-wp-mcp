@@ -251,6 +251,79 @@ export const MCP_TOOLS_CONFIG: McpToolGroup[] = [
         description: 'Permet de vérifier l\'état technique du site (version PHP, espace disque, etc.)'
       }
     ]
+  },
+  {
+    id: 'woocommerce',
+    name: 'WooCommerce',
+    description: 'Gérer la boutique en ligne',
+    icon: 'ShoppingCart',
+    tools: [
+      {
+        id: 'wc_list_products',
+        name: 'Lister les produits',
+        description: 'Permet de consulter tous les produits de la boutique'
+      },
+      {
+        id: 'wc_create_product',
+        name: 'Créer un produit',
+        description: 'Permet d\'ajouter de nouveaux produits avec prix, stock et catégories'
+      },
+      {
+        id: 'wc_update_product',
+        name: 'Modifier un produit',
+        description: 'Permet de modifier les informations d\'un produit existant'
+      },
+      {
+        id: 'wc_delete_product',
+        name: 'Supprimer un produit',
+        description: 'Permet de supprimer définitivement un produit (⚠️ irréversible)'
+      },
+      {
+        id: 'wc_list_orders',
+        name: 'Lister les commandes',
+        description: 'Permet de consulter toutes les commandes clients'
+      },
+      {
+        id: 'wc_get_order',
+        name: 'Consulter une commande',
+        description: 'Permet de voir les détails complets d\'une commande'
+      },
+      {
+        id: 'wc_update_order',
+        name: 'Modifier une commande',
+        description: 'Permet de mettre à jour le statut d\'une commande (en cours, terminée, etc.)'
+      },
+      {
+        id: 'wc_list_customers',
+        name: 'Lister les clients',
+        description: 'Permet de consulter la liste des clients de la boutique'
+      },
+      {
+        id: 'wc_create_customer',
+        name: 'Créer un client',
+        description: 'Permet d\'ajouter un nouveau client à la boutique'
+      },
+      {
+        id: 'wc_update_customer',
+        name: 'Modifier un client',
+        description: 'Permet de mettre à jour les informations d\'un client'
+      },
+      {
+        id: 'wc_list_categories',
+        name: 'Lister les catégories',
+        description: 'Permet de consulter les catégories de produits'
+      },
+      {
+        id: 'wc_create_category',
+        name: 'Créer une catégorie',
+        description: 'Permet d\'ajouter une nouvelle catégorie de produits'
+      },
+      {
+        id: 'wc_update_category',
+        name: 'Modifier une catégorie',
+        description: 'Permet de modifier une catégorie de produits existante'
+      }
+    ]
   }
 ]
 
