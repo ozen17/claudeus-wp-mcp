@@ -12,6 +12,7 @@ Plugin WordPress MCP (Model Context Protocol) ultra-complet avec **200+ outils**
 - **Support WooCommerce complet** (50+ endpoints)
 - **Architecture modulaire** et extensible
 - **Documentation exhaustive** intégrée
+- **✨ Lovable AI Pipeline Compatible** - Adaptateur intégré pour Lovable ([voir guide](LOVABLE-INTEGRATION.md))
 
 ## 📊 Outils Disponibles par Catégorie
 

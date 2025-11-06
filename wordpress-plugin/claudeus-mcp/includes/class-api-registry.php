@@ -45,6 +45,11 @@ class Claudeus_MCP_API_Registry {
             Claudeus_MCP_Discovery_Endpoint::register_routes(self::NAMESPACE);
         }
 
+        // Lovable Adapter (compatibility layer for Lovable AI pipeline)
+        if (class_exists('Claudeus_MCP_Lovable_Adapter')) {
+            Claudeus_MCP_Lovable_Adapter::register_routes();
+        }
+
         // Other category endpoints would be registered here
         // Each category has its own endpoint class
     }

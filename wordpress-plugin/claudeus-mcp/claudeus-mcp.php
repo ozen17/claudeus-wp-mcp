@@ -73,6 +73,9 @@ class Claudeus_MCP_Complete {
         require_once CLAUDEUS_MCP_PLUGIN_DIR . 'includes/class-tool-registry.php';
         require_once CLAUDEUS_MCP_PLUGIN_DIR . 'includes/class-rest-proxy.php';
 
+        // Lovable Adapter (compatibility layer)
+        require_once CLAUDEUS_MCP_PLUGIN_DIR . 'includes/endpoints/lovable-adapter.php';
+
         // Categories
         $this->load_category_endpoints();
 
